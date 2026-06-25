@@ -9,10 +9,10 @@ app.use(express.json());
 
 // 1. Azure PostgreSQL Connection (You can fill these details in later when you are ready to write to the DB)
 const dbClient = new Client({
-     host: 'psql-msc-tst-uks-134.postgres.database.azure.com',
-    user: 'pharmrxadmin',
-    password: '134Belfieldroad!',
-    database: 'rochdale_delivery_app',
+    host: 'YOUR_SERVER_NAME.postgres.database.azure.com',
+    user: 'YOUR_ENTRA_ADMIN_USER',
+    password: 'YOUR_PASSWORD',
+    database: 'YOUR_DATABASE_NAME',
     port: 5432,
     ssl: true
 });
