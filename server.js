@@ -3,33 +3,23 @@ const cors = require('cors');
 const { Client } = require('pg');
 const turf = require('@turf/turf');
 
-// 1. Import your secure configuration bridge
-const config = require('./config');
-
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 2. Azure PostgreSQL Connection (Now using config.db instead of hardcoded text)
-const dbClient = new Client(config.db);
+// 1. Azure PostgreSQL Connection (You can fill these details in later when you are ready to write to the DB)
+const dbClient = new Client({
+     host: 'YOUR_SERVER_NAME.postgres.database.azure.com',
+    user: 'YOUR_ENTRA_ADMIN_USER',
+    password: 'YOUR_PASSWORD',
+    database: 'YOUR_DATABASE_NAME',
+    port: 5432,
+    ssl: true
+});
 
 dbClient.connect()
     .then(() => console.log('Successfully connected to Azure PostgreSQL'))
     .catch(err => console.error('Database connection error', err));
-
-// ... (Your custom boundaries array stays here) ...
-
-// 3. Inside your app.post route, update the API key line:
-app.post('/api/route-delivery', async (req, res) => {
-    const { address } = req.body;
-    console.log(`\n--- New Request: ${address} ---`);
-    
-    // Now safely pulled from the .env file via config.js
-    const API_KEY = config.api.geocodeKey; 
-    const searchString = address + ", Rochdale, Greater Manchester, UK";
-    const geocodeUrl = `https://geocode.maps.co/search?q=${encodeURIComponent(searchString)}&api_key=${API_KEY}`;
-
-// ... (The rest of your routing logic stays exactly the same) ...
 
 // 2. Server-Side Custom Boundaries
 const myZoneNames = [
@@ -45,7 +35,7 @@ app.post('/api/route-delivery', async (req, res) => {
     console.log(`\n--- New Request: ${address} ---`);
     
     // REPLACE THIS WITH YOUR REAL API KEY
-    const API_KEY = config.api.geocodeKey; 
+    const API_KEY = '6a3bb9ca621d3166269760edo344b01'; 
     const searchString = address + ", Rochdale, Greater Manchester, UK";
     const geocodeUrl = `https://geocode.maps.co/search?q=${encodeURIComponent(searchString)}&api_key=${API_KEY}`;
 
