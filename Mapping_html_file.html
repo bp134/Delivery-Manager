@@ -26,6 +26,26 @@
         .zone-list { font-size: 0.9em; max-height: 150px; overflow-y: auto; background: #f8fafc; padding: 10px; border-radius: 4px; border: 1px solid #e2e8f0; margin-bottom: 15px;}
         .zone-item { padding: 4px 0; border-bottom: 1px solid #e2e8f0; }
         .zone-item:last-child { border-bottom: none; }
+
+        /* QR Scanner styles */
+        #qr-section { margin-bottom: 20px; }
+        #qr-scanner-container { display: none; position: relative; margin-top: 10px; border-radius: 8px; overflow: hidden; background: #000; }
+        #qr-video { width: 100%; max-height: 260px; object-fit: cover; display: block; }
+        #qr-canvas { display: none; }
+        #qr-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+        #qr-overlay svg { width: 180px; height: 180px; opacity: 0.7; }
+        #scan-btn { background: #059669; }
+        #scan-btn:hover { background: #047857; }
+        #stop-scan-btn { background: #dc2626; display: none; }
+        #stop-scan-btn:hover { background: #b91c1c; }
+        #scan-status { margin-top: 8px; font-size: 0.85em; color: #64748b; min-height: 20px; text-align: center; }
+        #batch-log { margin-top: 10px; max-height: 120px; overflow-y: auto; font-size: 0.82em; background: #f8fafc; border: 1px solid var(--border); border-radius: 4px; padding: 8px; display: none; }
+        .batch-entry { padding: 3px 0; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; }
+        .batch-entry:last-child { border-bottom: none; }
+        .batch-postcode { font-weight: bold; font-family: monospace; color: var(--primary); }
+        .batch-zone { color: #059669; font-size: 0.9em; }
+        #clear-log-btn { background: #64748b; margin-top: 6px; font-size: 0.85em; padding: 6px 10px; display: none; }
+        #clear-log-btn:hover { background: #475569; }
     </style>
 </head>
 <body>
@@ -43,13 +63,37 @@
             <h3>2. Loaded Groupings</h3>
             <div id="activeZones" class="zone-list"></div>
 
+            <div id="qr-section">
+                <h3>2b. Scan Delivery Label</h3>
+                <button id="scan-btn" onclick="startScanner()">&#9654; Start Camera &amp; Scan</button>
+                <button id="stop-scan-btn" onclick="stopScanner()">&#9632; Stop Scanner</button>
+
+                <div id="qr-scanner-container">
+                    <video id="qr-video" autoplay muted playsinline></video>
+                    <canvas id="qr-canvas"></canvas>
+                    <div id="qr-overlay">
+                        <svg viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="2" y="2" width="50" height="50" rx="6" stroke="white" stroke-width="4" fill="none"/>
+                            <rect x="128" y="2" width="50" height="50" rx="6" stroke="white" stroke-width="4" fill="none"/>
+                            <rect x="2" y="128" width="50" height="50" rx="6" stroke="white" stroke-width="4" fill="none"/>
+                            <rect x="128" y="128" width="50" height="50" rx="6" stroke="white" stroke-width="4" fill="none"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <div id="scan-status">Press "Start Camera &amp; Scan" to begin</div>
+
+                <div id="batch-log"></div>
+                <button id="clear-log-btn" onclick="clearBatchLog()">Clear scan log</button>
+            </div>
+
             <h3>3. Process Address</h3>
             <div class="input-group">
                 <label>Address on Manifest:</label>
                 <input type="text" id="addressInput" placeholder="e.g., 12 Halifax Road">
             </div>
 
-            <button onclick="processAddress()">Secure Geocode & Route</button>
+            <button onclick="processAddress()">Secure Geocode &amp; Route</button>
 
             <div class="result-box" id="resultOutput">
                 <em>Awaiting address input...</em>
@@ -59,6 +103,7 @@
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/jsqr@1.4.0/dist/jsQR.js"></script>
 
 <script>
     console.log("Loading Map and Groupings...");
@@ -96,7 +141,175 @@
 
     let currentMarker = null;
 
-    // Hard-linked function to prevent "not defined" errors
+    // ── QR SCANNER ──────────────────────────────────────────────────
+    let videoStream = null;
+    let scanLoop = null;
+    let lastScanned = '';
+    let lastScannedTime = 0;
+    const SCAN_COOLDOWN_MS = 3000; // 3 seconds before same code can re-trigger
+    let batchLog = [];
+
+    function startScanner() {
+        const container = document.getElementById('qr-scanner-container');
+        const video = document.getElementById('qr-video');
+        const scanBtn = document.getElementById('scan-btn');
+        const stopBtn = document.getElementById('stop-scan-btn');
+        const status = document.getElementById('scan-status');
+
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            status.innerHTML = '<span style="color:#dc2626">Camera not supported on this browser. Use Chrome on Android.</span>';
+            return;
+        }
+
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+            .then(function(stream) {
+                videoStream = stream;
+                video.srcObject = stream;
+                container.style.display = 'block';
+                scanBtn.style.display = 'none';
+                stopBtn.style.display = 'block';
+                status.textContent = 'Camera active — point at a delivery label QR code';
+                requestAnimationFrame(scanFrame);
+            })
+            .catch(function(err) {
+                status.innerHTML = '<span style="color:#dc2626">Camera access denied. Please allow camera permission in your browser.</span>';
+                console.error('Camera error:', err);
+            });
+    }
+
+    function stopScanner() {
+        if (videoStream) {
+            videoStream.getTracks().forEach(t => t.stop());
+            videoStream = null;
+        }
+        if (scanLoop) {
+            cancelAnimationFrame(scanLoop);
+            scanLoop = null;
+        }
+        document.getElementById('qr-scanner-container').style.display = 'none';
+        document.getElementById('scan-btn').style.display = 'block';
+        document.getElementById('stop-scan-btn').style.display = 'none';
+        document.getElementById('scan-status').textContent = 'Scanner stopped. Press "Start Camera & Scan" to resume.';
+    }
+
+    function scanFrame() {
+        const video = document.getElementById('qr-video');
+        const canvas = document.getElementById('qr-canvas');
+
+        if (!videoStream) return;
+
+        if (video.readyState === video.HAVE_ENOUGH_DATA) {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'dontInvert' });
+
+            if (code) {
+                const now = Date.now();
+                const isDuplicate = (code.data === lastScanned) && (now - lastScannedTime < SCAN_COOLDOWN_MS);
+
+                if (!isDuplicate) {
+                    lastScanned = code.data;
+                    lastScannedTime = now;
+                    handleQRResult(code.data);
+                }
+            }
+        }
+
+        scanLoop = requestAnimationFrame(scanFrame);
+    }
+
+    function handleQRResult(raw) {
+        const fields = raw.split(';');
+        const postcode = (fields[6] || '').trim();
+        const status = document.getElementById('scan-status');
+
+        if (!postcode) {
+            status.innerHTML = '<span style="color:#dc2626">QR scanned but postcode field was empty. Check label format.</span>';
+            return;
+        }
+
+        // Populate the address input and trigger routing
+        document.getElementById('addressInput').value = postcode;
+        status.innerHTML = `<span style="color:#059669">✓ Scanned: <strong>${postcode}</strong> — routing...</span>`;
+
+        // Auto-trigger processAddress and capture result for batch log
+        processAddressAndLog(postcode);
+    }
+
+    async function processAddressAndLog(postcode) {
+        const output = document.getElementById('resultOutput');
+        output.innerHTML = '<em>Transmitting securely to local server...</em>';
+
+        try {
+            const response = await fetch('http://localhost:3000/api/route-delivery', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ address: postcode })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                if (currentMarker) map.removeLayer(currentMarker);
+                currentMarker = L.marker([data.lat, data.lng]).addTo(map).bindPopup(postcode).openPopup();
+
+                output.innerHTML = `
+                    <div><strong>Address:</strong> ${postcode}</div>
+                    <hr style="border:0; border-top:1px solid #ccc; margin: 10px 0;">
+                    <div><strong>Assigned Grouping:</strong> <span class="status">${data.zone}</span></div>
+                    <div style="font-size: 0.8em; color: #64748b; margin-top: 5px;">✓ Securely logged</div>
+                `;
+
+                addToBatchLog(postcode, data.zone);
+
+                // Update scan status for next scan
+                document.getElementById('scan-status').innerHTML = 
+                    `<span style="color:#059669">✓ ${postcode} → ${data.zone} — ready for next scan</span>`;
+
+            } else {
+                output.innerHTML = `<span class="error">${data.message}</span>`;
+                document.getElementById('scan-status').innerHTML = 
+                    `<span style="color:#dc2626">Could not route ${postcode} — scan next label</span>`;
+                addToBatchLog(postcode, 'Unmatched');
+            }
+
+        } catch (error) {
+            console.error("Frontend Error:", error);
+            output.innerHTML = `<span class="error">Connection to local server failed. Is your Node server running?</span>`;
+            document.getElementById('scan-status').innerHTML = 
+                `<span style="color:#dc2626">Server connection failed — is Node running?</span>`;
+        }
+    }
+
+    function addToBatchLog(postcode, zone) {
+        const timestamp = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        batchLog.unshift({ postcode, zone, time: timestamp });
+
+        const logDiv = document.getElementById('batch-log');
+        const clearBtn = document.getElementById('clear-log-btn');
+        logDiv.style.display = 'block';
+        clearBtn.style.display = 'block';
+
+        logDiv.innerHTML = batchLog.map(entry => `
+            <div class="batch-entry">
+                <span class="batch-postcode">${entry.postcode}</span>
+                <span class="batch-zone">${entry.zone}</span>
+                <span style="color:#94a3b8; font-size:0.85em;">${entry.time}</span>
+            </div>
+        `).join('');
+    }
+
+    function clearBatchLog() {
+        batchLog = [];
+        document.getElementById('batch-log').style.display = 'none';
+        document.getElementById('clear-log-btn').style.display = 'none';
+        document.getElementById('batch-log').innerHTML = '';
+    }
+
+    // ── ORIGINAL processAddress (unchanged, kept for manual use) ────
     window.processAddress = async function() {
         const address = document.getElementById('addressInput').value.trim();
         const output = document.getElementById('resultOutput');
