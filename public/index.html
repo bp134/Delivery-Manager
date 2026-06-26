@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Delivery Sorter</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        :root { --primary: #2563eb; --bg: #f8fafc; --surface: #ffffff; --text: #0f172a; --border: #e2e8f0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+        .panel { background: var(--surface); padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid var(--border); }
+        #map { height: 500px; border-radius: 8px; border: 1px solid #ccc; z-index: 1; margin-top: 10px; }
+        h3 { margin-top: 0; color: var(--primary); border-bottom: 2px solid var(--bg); padding-bottom: 10px; }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; font-size: 0.9em; font-weight: bold; margin-bottom: 5px; }
+        input[type="text"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-family: monospace; }
+        button { background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; }
+        button:hover { background: #1d4ed8; }
+        .result-box { margin-top: 15px; padding: 15px; border-radius: 4px; background: #f1f5f9; border: 1px solid var(--border); font-size: 0.95em; }
+        .status { font-weight: bold; color: #059669; }
+        .error { color: #dc2626; }
+        .warning { color: #d97706; font-size: 0.85em; margin-top: 6px; }
+        .zone-list { font-size: 0.9em; max-height: 150px; overflow-y: auto; background: #f8fafc; padding: 10px; border-radius: 4px; border: 1px solid #e2e8f0; margin-bottom: 15px;}
+        .zone-item { padding: 4px 0; border-bottom: 1px solid #e2e8f0; }
+        .zone-item:last-child { border-bottom: none; }
+        #qr-section { margin-bottom: 20px; }
+        #qr-scanner-container { display: none; position: relative; margin-top: 10px; border-radius: 8px; overflow: hidden; background: #000; }
+        #qr-video { width: 100%; max-height: 260px; object-fit: cover; display: block; }
+        #qr-canvas { display: none; }
+        #qr-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+        #qr-overlay svg { width: 180px; height: 180px; opacity: 0.7; }
+        #scan-btn { background: #059669; }
+        #scan-btn:hover { background: #047857; }
+        #stop-scan-btn { background: #dc2626; display: none; }
+        #stop-scan-btn:hover { background: #b91c1c; }
+        #scan-status { margin-top: 8px; font-size: 0.85em; color: #64748b; min-height: 20px; text-align: center; }
+        #batch-log { margin-top: 10px; max-height: 120px; overflow-y: auto; font-size: 0.82em; background: #f8fafc; border: 1px solid var(--border); border-radius: 4px; padding: 8px; display: none; }
+        .batch-entry { padding: 3px 0; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; gap: 8px; }
+        .batch-entry:last-child { border-bottom: none; }
+        .batch-postcode { font-weight: bold; font-family: monospace; color: var(--primary); }
+        .batch-zone { color: #059669; font-size: 0.9em; }
+        #clear-log-btn { background: #64748b; margin-top: 6px; font-size: 0.85em; padding: 6px 10px; display: none; }
+        #clear-log-btn:hover { background: #475569; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 style="text-align: center; color: var(--primary);">Secure Delivery Routing</h1>
+
+    <div class="grid">
+        <div class="panel">
+            <h3>1. Active Boundaries</h3>
+            <div id="map"></div>
+        </div>
+
+        <div class="panel">
+            <h3>2. Loaded Groupings</h3>
+            <div id="activeZones" class="zone-list"><em>Loading zones...</em></div>
+
+            <div id="qr-section">
+                <h3>2b. Scan Delivery Label</h3>
+                <button id="scan-btn" type="button">&#9654; Start Camera &amp; Scan</button>
+                <button id="stop-scan-btn" type="button">&#9632; Stop Scanner</button>
+
+                <div id="qr-scanner-container">
+                    <video id="qr-video" autoplay muted playsinline></video>
+                    <canvas id="qr-canvas"></canvas>
+                    <div id="qr-overlay">
+                        <svg viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <rect x="2" y="2" width="50" height="50" rx="6" stroke="white" stroke-width="4" fill="none"/>
+                            <rect x="128" y="2" width="50" height="50" rx="6" stroke="white" stroke-width="4" fill="none"/>
+                            <rect x="2" y="128" width="50" height="50" rx="6" stroke="white" stroke-width="4" fill="none"/>
+                            <rect x="128" y="128" width="50" height="50" rx="6" stroke="white" stroke-width="4" fill="none"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <div id="scan-status">Press "Start Camera &amp; Scan" to begin</div>
+
+                <div id="batch-log"></div>
+                <button id="clear-log-btn" type="button">Clear scan log</button>
+            </div>
+
+            <h3>3. Process Address</h3>
+            <div class="input-group">
+                <label for="addressInput">Address on Manifest:</label>
+                <input type="text" id="addressInput" placeholder="e.g., 12 Halifax Road">
+            </div>
+
+            <button id="route-btn" type="button">Secure Geocode &amp; Route</button>
+
+            <div class="result-box" id="resultOutput">
+                <em>Awaiting address input...</em>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/jsqr@1.4.0/dist/jsQR.js"></script>
+
+<script>
+    const API_BASE = window.location.origin;
+    const map = L.map('map').setView([53.6136, -2.1620], 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+    const drawnItems = new L.FeatureGroup();
+    map.addLayer(drawnItems);
+
+    let currentMarker = null;
+    let videoStream = null;
+    let scanLoop = null;
+    let lastScanned = '';
+    let lastScannedTime = 0;
+    const SCAN_COOLDOWN_MS = 3000;
+    let batchLog = [];
+
+    function escapeHtml(value) {
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
+
+    function renderResult(address, data) {
+        const overlapNote = data.overlap
+            ? `<div class="warning">Overlapping zones detected: ${escapeHtml((data.allMatches || []).join(', '))}</div>`
+            : '';
+        const loggedNote = data.logged
+            ? '<div style="font-size: 0.8em; color: #64748b; margin-top: 5px;">Saved to database</div>'
+            : '<div style="font-size: 0.8em; color: #64748b; margin-top: 5px;">Routed successfully (database not connected)</div>';
+
+        return `
+            <div><strong>Address:</strong> ${escapeHtml(address)}</div>
+            <hr style="border:0; border-top:1px solid #ccc; margin: 10px 0;">
+            <div><strong>Assigned Grouping:</strong> <span class="status">${escapeHtml(data.zone)}</span></div>
+            ${overlapNote}
+            ${loggedNote}
+        `;
+    }
+
+    async function routeAddress(address, source = 'manual') {
+        const output = document.getElementById('resultOutput');
+        output.innerHTML = '<em>Transmitting to server...</em>';
+
+        const response = await fetch(`${API_BASE}/api/route-delivery`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ address, source })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || 'Routing failed');
+        }
+
+        if (currentMarker) map.removeLayer(currentMarker);
+        currentMarker = L.marker([data.lat, data.lng]).addTo(map).bindPopup(escapeHtml(address)).openPopup();
+
+        output.innerHTML = renderResult(address, data);
+        return data;
+    }
+
+    async function loadZones() {
+        const listDiv = document.getElementById('activeZones');
+        const response = await fetch(`${API_BASE}/api/zones`);
+
+        if (!response.ok) {
+            listDiv.innerHTML = '<span class="error">Failed to load delivery zones</span>';
+            return;
+        }
+
+        const zones = await response.json();
+        const zoneNames = [];
+
+        L.geoJSON(zones, {
+            style: () => ({ color: '#2563eb', weight: 2 }),
+            onEachFeature(feature, layer) {
+                drawnItems.addLayer(layer);
+                zoneNames.push(feature.properties?.name || 'Unnamed zone');
+            }
+        });
+
+        if (zoneNames.length > 0) {
+            map.fitBounds(drawnItems.getBounds());
+        }
+
+        listDiv.innerHTML = zoneNames.map(name => `<div class="zone-item">• ${escapeHtml(name)}</div>`).join('');
+    }
+
+    function addToBatchLog(postcode, zone) {
+        const timestamp = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        batchLog.unshift({ postcode, zone, time: timestamp });
+
+        const logDiv = document.getElementById('batch-log');
+        const clearBtn = document.getElementById('clear-log-btn');
+        logDiv.style.display = 'block';
+        clearBtn.style.display = 'block';
+
+        logDiv.innerHTML = batchLog.map(entry => `
+            <div class="batch-entry">
+                <span class="batch-postcode">${escapeHtml(entry.postcode)}</span>
+                <span class="batch-zone">${escapeHtml(entry.zone)}</span>
+                <span style="color:#94a3b8; font-size:0.85em;">${escapeHtml(entry.time)}</span>
+            </div>
+        `).join('');
+    }
+
+    function clearBatchLog() {
+        batchLog = [];
+        document.getElementById('batch-log').style.display = 'none';
+        document.getElementById('clear-log-btn').style.display = 'none';
+        document.getElementById('batch-log').innerHTML = '';
+    }
+
+    function startScanner() {
+        const container = document.getElementById('qr-scanner-container');
+        const video = document.getElementById('qr-video');
+        const scanBtn = document.getElementById('scan-btn');
+        const stopBtn = document.getElementById('stop-scan-btn');
+        const status = document.getElementById('scan-status');
+
+        if (!navigator.mediaDevices?.getUserMedia) {
+            status.innerHTML = '<span class="error">Camera not supported on this browser.</span>';
+            return;
+        }
+
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+            .then((stream) => {
+                videoStream = stream;
+                video.srcObject = stream;
+                container.style.display = 'block';
+                scanBtn.style.display = 'none';
+                stopBtn.style.display = 'block';
+                status.textContent = 'Camera active — point at a delivery label QR code';
+                requestAnimationFrame(scanFrame);
+            })
+            .catch((err) => {
+                status.innerHTML = '<span class="error">Camera access denied. Please allow camera permission.</span>';
+                console.error('Camera error:', err);
+            });
+    }
+
+    function stopScanner() {
+        if (videoStream) {
+            videoStream.getTracks().forEach(track => track.stop());
+            videoStream = null;
+        }
+        if (scanLoop) {
+            cancelAnimationFrame(scanLoop);
+            scanLoop = null;
+        }
+        document.getElementById('qr-scanner-container').style.display = 'none';
+        document.getElementById('scan-btn').style.display = 'block';
+        document.getElementById('stop-scan-btn').style.display = 'none';
+        document.getElementById('scan-status').textContent = 'Scanner stopped.';
+    }
+
+    function scanFrame() {
+        const video = document.getElementById('qr-video');
+        const canvas = document.getElementById('qr-canvas');
+
+        if (!videoStream) return;
+
+        if (video.readyState === video.HAVE_ENOUGH_DATA) {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'dontInvert' });
+
+            if (code) {
+                const now = Date.now();
+                const isDuplicate = code.data === lastScanned && now - lastScannedTime < SCAN_COOLDOWN_MS;
+
+                if (!isDuplicate) {
+                    lastScanned = code.data;
+                    lastScannedTime = now;
+                    handleQRResult(code.data);
+                }
+            }
+        }
+
+        scanLoop = requestAnimationFrame(scanFrame);
+    }
+
+    async function handleQRResult(raw) {
+        const fields = raw.split(';');
+        const postcode = (fields[6] || '').trim();
+        const status = document.getElementById('scan-status');
+
+        if (!postcode) {
+            status.innerHTML = '<span class="error">QR scanned but postcode field was empty.</span>';
+            return;
+        }
+
+        document.getElementById('addressInput').value = postcode;
+        status.innerHTML = `<span class="status">Scanned: <strong>${escapeHtml(postcode)}</strong> — routing...</span>`;
+
+        try {
+            const data = await routeAddress(postcode, 'qr');
+            addToBatchLog(postcode, data.zone);
+            status.innerHTML = `<span class="status">${escapeHtml(postcode)} → ${escapeHtml(data.zone)} — ready for next scan</span>`;
+        } catch (error) {
+            document.getElementById('resultOutput').innerHTML = `<span class="error">${escapeHtml(error.message)}</span>`;
+            status.innerHTML = `<span class="error">Could not route ${escapeHtml(postcode)}</span>`;
+            addToBatchLog(postcode, 'Unmatched');
+        }
+    }
+
+    async function processAddress() {
+        const address = document.getElementById('addressInput').value.trim();
+        const output = document.getElementById('resultOutput');
+
+        if (!address) {
+            output.innerHTML = '<span class="error">Please provide an address.</span>';
+            return;
+        }
+
+        try {
+            await routeAddress(address, 'manual');
+        } catch (error) {
+            output.innerHTML = `<span class="error">${escapeHtml(error.message)}</span>`;
+        }
+    }
+
+    document.getElementById('scan-btn').addEventListener('click', startScanner);
+    document.getElementById('stop-scan-btn').addEventListener('click', stopScanner);
+    document.getElementById('clear-log-btn').addEventListener('click', clearBatchLog);
+    document.getElementById('route-btn').addEventListener('click', processAddress);
+    document.getElementById('addressInput').addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') processAddress();
+    });
+
+    loadZones().catch((error) => {
+        console.error('Failed to load zones:', error);
+        document.getElementById('activeZones').innerHTML = '<span class="error">Failed to load delivery zones</span>';
+    });
+</script>
+</body>
+</html>
