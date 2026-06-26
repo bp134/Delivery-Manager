@@ -35,7 +35,7 @@ app.post('/api/route-delivery', async (req, res) => {
     console.log(`\n--- New Request: ${address} ---`);
     
     // REPLACE THIS WITH YOUR REAL API KEY
-    const API_KEY = '6a3bb9ca621d3166269760edo344b01'; 
+    const API_KEY = 'YOUR_GEOCODE_MAPS_CO_KEY'; 
     const searchString = address + ", Rochdale, Greater Manchester, UK";
     const geocodeUrl = `https://geocode.maps.co/search?q=${encodeURIComponent(searchString)}&api_key=${API_KEY}`;
 
