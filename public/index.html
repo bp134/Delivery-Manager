@@ -31,6 +31,8 @@
         #qr-scanner-container { display: none; position: relative; margin-top: 10px; border-radius: 8px; overflow: hidden; background: #000; min-height: 260px; }
         #qr-scanner-container video { width: 100% !important; max-height: 280px; object-fit: cover; border-radius: 8px; }
         #qr-scanner-container img { display: none !important; }
+        /* Hide html5-qrcode corner overlay — plain camera view */
+        #qr-scanner-container #qr-shaded-region { display: none !important; }
         #scan-btn { background: #059669; }
         #scan-btn:hover { background: #047857; }
         #stop-scan-btn { background: #dc2626; display: none; }
@@ -108,14 +110,106 @@
     let isRouting = false;
 
     const BARCODE_FORMATS = [
-        Html5QrcodeSupportedFormats.QR_CODE,
         Html5QrcodeSupportedFormats.DATA_MATRIX,
+        Html5QrcodeSupportedFormats.QR_CODE,
         Html5QrcodeSupportedFormats.CODE_128,
-        Html5QrcodeSupportedFormats.CODE_39,
         Html5QrcodeSupportedFormats.PDF_417
     ];
 
     const UK_POSTCODE_RE = /\b([A-Z]{1,2}\d{1,2}[A-Z]?\s*\d[A-Z]{2})\b/i;
+
+    function extractUKPostcode(text) {
+        if (!text) return null;
+        const match = String(text).toUpperCase().match(UK_POSTCODE_RE);
+        return match ? match[1].replace(/\s+/g, ' ').trim() : null;
+    }
+
+    function splitLabelFields(raw) {
+        const normalized = String(raw)
+            .replace(/[\x1D\x1E\x1F]/g, ';')
+            .replace(/\|/g, ';');
+
+        if (normalized.includes(';')) {
+            return normalized.split(';').map((field) => field.trim());
+        }
+
+        return [normalized.trim()];
+    }
+
+    function parseLabelQR(raw) {
+        const trimmed = String(raw || '').trim();
+        if (!trimmed) return null;
+
+        const gs1Postcode = trimmed.match(/\(420\)([A-Z0-9\s]+)/i);
+        if (gs1Postcode) {
+            const postcode = extractUKPostcode(gs1Postcode[1]) || gs1Postcode[1].trim();
+            return { address: postcode, postcode, fields: [] };
+        }
+
+        if (/^https?:\/\//i.test(trimmed)) {
+            try {
+                const url = new URL(trimmed);
+                const postcode = url.searchParams.get('postcode')
+                    || url.searchParams.get('pc')
+                    || extractUKPostcode(url.pathname);
+                const address = url.searchParams.get('address') || postcode;
+                if (address) {
+                    return { address, postcode: postcode || extractUKPostcode(address), fields: [] };
+                }
+            } catch (error) {
+                console.warn('Could not parse barcode URL:', error);
+            }
+        }
+
+        const fields = splitLabelFields(trimmed);
+
+        for (let i = 0; i < fields.length; i++) {
+            if (!fields[i]) continue;
+            const postcode = extractUKPostcode(fields[i]);
+            if (postcode) {
+                const addressLines = fields.slice(Math.max(0, i - 3), i).filter(Boolean);
+                const address = addressLines.length > 0
+                    ? [...addressLines, postcode].join(', ')
+                    : postcode;
+                return { address, postcode, fields };
+            }
+        }
+
+        const legacyPostcode = (fields[6] || '').trim();
+        const addressLines = fields.slice(3, 6).filter(Boolean);
+
+        if (legacyPostcode) {
+            const address = addressLines.length > 0
+                ? [...addressLines, legacyPostcode].join(', ')
+                : legacyPostcode;
+            return {
+                address,
+                postcode: extractUKPostcode(legacyPostcode) || legacyPostcode,
+                fields
+            };
+        }
+
+        if (addressLines.length > 0) {
+            const address = addressLines.join(', ');
+            return { address, postcode: null, fields };
+        }
+
+        const postcodeInFull = extractUKPostcode(trimmed);
+        if (postcodeInFull) {
+            return { address: postcodeInFull, postcode: postcodeInFull, fields };
+        }
+
+        const nonEmptyFields = fields.filter(Boolean);
+        if (nonEmptyFields.length === 1 && nonEmptyFields[0].length <= 12) {
+            return { address: nonEmptyFields[0], postcode: null, fields };
+        }
+
+        if (nonEmptyFields.length > 0) {
+            return { address: nonEmptyFields.join(', '), postcode: null, fields };
+        }
+
+        return null;
+    }
 
     function escapeHtml(value) {
         return String(value)
@@ -140,58 +234,6 @@
             ${overlapNote}
             ${loggedNote}
         `;
-    }
-
-    function parseLabelQR(raw) {
-        const trimmed = String(raw || '').trim();
-        if (!trimmed) return null;
-
-        if (trimmed.includes(';')) {
-            const fields = trimmed.split(';').map((field) => field.trim());
-
-            const postcodeField = (fields[6] || '').trim();
-            const addressLines = fields.slice(3, 6).filter(Boolean);
-            const postcodeFromField = postcodeField.match(UK_POSTCODE_RE)?.[1]
-                || fields.map((field) => field.match(UK_POSTCODE_RE)?.[1]).find(Boolean);
-
-            if (addressLines.length > 0) {
-                const address = [...addressLines, postcodeFromField || postcodeField].filter(Boolean).join(', ');
-                return { address, postcode: postcodeFromField || postcodeField || null };
-            }
-
-            if (postcodeField) {
-                return { address: postcodeField, postcode: postcodeFromField || postcodeField };
-            }
-
-            for (const field of fields) {
-                const postcode = field.match(UK_POSTCODE_RE)?.[1];
-                if (postcode) {
-                    return { address: field, postcode };
-                }
-            }
-        }
-
-        if (/^https?:\/\//i.test(trimmed)) {
-            try {
-                const url = new URL(trimmed);
-                const postcode = url.searchParams.get('postcode')
-                    || url.searchParams.get('pc')
-                    || url.pathname.match(UK_POSTCODE_RE)?.[1];
-                const address = url.searchParams.get('address') || postcode;
-                if (address) {
-                    return { address, postcode: postcode || address.match(UK_POSTCODE_RE)?.[1] || null };
-                }
-            } catch (error) {
-                console.warn('Could not parse QR URL:', error);
-            }
-        }
-
-        const postcode = trimmed.match(UK_POSTCODE_RE)?.[1];
-        if (postcode && trimmed.length <= 12) {
-            return { address: postcode, postcode };
-        }
-
-        return { address: trimmed, postcode: postcode || null };
     }
 
     async function routeAddress(address, source = 'manual') {
@@ -319,19 +361,11 @@
         try {
             await html5QrCode.start(
                 { facingMode: 'environment' },
-                {
-                    fps: 12,
-                    qrbox: (viewfinderWidth, viewfinderHeight) => {
-                        const width = Math.floor(viewfinderWidth * 0.92);
-                        const height = Math.floor(Math.min(viewfinderHeight * 0.55, width * 0.55));
-                        return { width, height };
-                    },
-                    aspectRatio: 1.333
-                },
+                { fps: 12, aspectRatio: 1.333 },
                 onBarcodeDetected,
                 () => {}
             );
-            status.textContent = 'Camera active — centre the barcode on the label in the frame';
+            status.textContent = 'Camera active — hold the square barcode steady in view';
         } catch (err) {
             console.error('Scanner error:', err);
             status.innerHTML = '<span class="error">Camera access denied or unavailable. Please allow camera permission and try again.</span>';
@@ -373,13 +407,17 @@
         console.log('QR parsed:', parsed);
 
         if (!parsed?.address) {
-            const preview = escapeHtml(raw.slice(0, 80));
-            status.innerHTML = `<span class="error">QR scanned but no address could be read. Data: "${preview}${raw.length > 80 ? '…' : ''}"</span>`;
+            const preview = escapeHtml(raw.slice(0, 120));
+            status.innerHTML = `<span class="error">Barcode read but no address found. Raw data: "${preview}${raw.length > 120 ? '…' : ''}" — try entering the postcode manually, or share this data so we can match your label format.</span>`;
             return;
         }
 
-        const { address, postcode } = parsed;
+        const { address, postcode, fields } = parsed;
         const displayLabel = postcode || address;
+
+        if (!postcode && fields?.length) {
+            console.warn('No postcode in barcode — routing with:', address, 'Fields:', fields);
+        }
 
         document.getElementById('addressInput').value = address;
         status.innerHTML = `<span class="status">Scanned: <strong>${escapeHtml(displayLabel)}</strong> — routing...</span>`;
