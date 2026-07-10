@@ -134,7 +134,7 @@
             : '';
         const loggedNote = data.logged
             ? '<div style="font-size: 0.8em; color: #64748b; margin-top: 5px;">Saved to database</div>'
-            : '<div style="font-size: 0.8em; color: #64748b; margin-top: 5px;">Routed successfully (database not connected)</div>';
+            : `<div style="font-size: 0.8em; color: #dc2626; margin-top: 5px;">Routed successfully but not saved${data.logError ? `: ${escapeHtml(data.logError)}` : ''}</div>`;
 
         return `
             <div><strong>Address:</strong> ${escapeHtml(address)}</div>

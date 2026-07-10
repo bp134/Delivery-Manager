@@ -5,7 +5,7 @@ const rateLimit = require('express-rate-limit');
 const config = require('./config');
 const zones = require('./lib/zones');
 const { routeDelivery } = require('./lib/routing');
-const { checkDbConnection } = require('./lib/db');
+const { checkDbConnection, initDatabase, closeDatabase } = require('./lib/db');
 
 const app = express();
 
@@ -25,12 +25,16 @@ const routeLimiter = rateLimit({
 });
 
 app.get('/api/health', async (_req, res) => {
-    const dbConnected = await checkDbConnection();
+    const dbStatus = await checkDbConnection();
+
     res.json({
         status: 'ok',
-        database: dbConnected ? 'connected' : 'disconnected',
+        database: dbStatus.connected ? 'connected' : 'disconnected',
+        databaseConfigured: dbStatus.configured,
+        tableReady: dbStatus.tableReady,
+        databaseError: dbStatus.error || null,
         geocodeConfigured: Boolean(config.api.geocodeKey),
-        region: 'local'
+        platform: process.env.RAILWAY_ENVIRONMENT ? 'railway' : 'local'
     });
 });
 
@@ -51,15 +55,16 @@ app.post('/api/route-delivery', routeLimiter, async (req, res) => {
     }
 });
 
-const server = app.listen(config.server.port, () => {
-    console.log(`Server running at http://localhost:${config.server.port}`);
-    if (!config.dbEnabled) {
-        console.log('Database not configured — routing will work without persistence');
-    }
+const server = app.listen(config.server.port, '0.0.0.0', async () => {
+    console.log(`Server running on port ${config.server.port}`);
+    await initDatabase();
 });
 
 function shutdown() {
-    server.close(() => process.exit(0));
+    server.close(async () => {
+        await closeDatabase();
+        process.exit(0);
+    });
 }
 
 process.on('SIGINT', shutdown);
