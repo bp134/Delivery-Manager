@@ -28,11 +28,9 @@
         .zone-item { padding: 4px 0; border-bottom: 1px solid #e2e8f0; }
         .zone-item:last-child { border-bottom: none; }
         #qr-section { margin-bottom: 20px; }
-        #qr-scanner-container { display: none; position: relative; margin-top: 10px; border-radius: 8px; overflow: hidden; background: #000; }
-        #qr-video { width: 100%; max-height: 260px; object-fit: cover; display: block; }
-        #qr-canvas { display: none; }
-        #qr-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; pointer-events: none; }
-        #qr-overlay svg { width: 180px; height: 180px; opacity: 0.7; }
+        #qr-scanner-container { display: none; position: relative; margin-top: 10px; border-radius: 8px; overflow: hidden; background: #000; min-height: 260px; }
+        #qr-scanner-container video { width: 100% !important; max-height: 280px; object-fit: cover; border-radius: 8px; }
+        #qr-scanner-container img { display: none !important; }
         #scan-btn { background: #059669; }
         #scan-btn:hover { background: #047857; }
         #stop-scan-btn { background: #dc2626; display: none; }
@@ -67,20 +65,9 @@
                 <button id="scan-btn" type="button">&#9654; Start Camera &amp; Scan</button>
                 <button id="stop-scan-btn" type="button">&#9632; Stop Scanner</button>
 
-                <div id="qr-scanner-container">
-                    <video id="qr-video" autoplay muted playsinline></video>
-                    <canvas id="qr-canvas"></canvas>
-                    <div id="qr-overlay">
-                        <svg viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                            <rect x="2" y="2" width="50" height="50" rx="6" stroke="white" stroke-width="4" fill="none"/>
-                            <rect x="128" y="2" width="50" height="50" rx="6" stroke="white" stroke-width="4" fill="none"/>
-                            <rect x="2" y="128" width="50" height="50" rx="6" stroke="white" stroke-width="4" fill="none"/>
-                            <rect x="128" y="128" width="50" height="50" rx="6" stroke="white" stroke-width="4" fill="none"/>
-                        </svg>
-                    </div>
-                </div>
+                <div id="qr-scanner-container"></div>
 
-                <div id="scan-status">Press "Start Camera &amp; Scan" to begin</div>
+                <div id="scan-status">Press "Start Camera &amp; Scan" to begin — supports QR, Data Matrix, and Code 128 barcodes</div>
 
                 <div id="batch-log"></div>
                 <button id="clear-log-btn" type="button">Clear scan log</button>
@@ -102,7 +89,7 @@
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://unpkg.com/jsqr@1.4.0/dist/jsQR.js"></script>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
 <script>
     const API_BASE = window.location.origin;
@@ -113,12 +100,22 @@
     map.addLayer(drawnItems);
 
     let currentMarker = null;
-    let videoStream = null;
-    let scanLoop = null;
+    let html5QrCode = null;
     let lastScanned = '';
     let lastScannedTime = 0;
     const SCAN_COOLDOWN_MS = 3000;
     let batchLog = [];
+    let isRouting = false;
+
+    const BARCODE_FORMATS = [
+        Html5QrcodeSupportedFormats.QR_CODE,
+        Html5QrcodeSupportedFormats.DATA_MATRIX,
+        Html5QrcodeSupportedFormats.CODE_128,
+        Html5QrcodeSupportedFormats.CODE_39,
+        Html5QrcodeSupportedFormats.PDF_417
+    ];
+
+    const UK_POSTCODE_RE = /\b([A-Z]{1,2}\d{1,2}[A-Z]?\s*\d[A-Z]{2})\b/i;
 
     function escapeHtml(value) {
         return String(value)
@@ -145,17 +142,79 @@
         `;
     }
 
+    function parseLabelQR(raw) {
+        const trimmed = String(raw || '').trim();
+        if (!trimmed) return null;
+
+        if (trimmed.includes(';')) {
+            const fields = trimmed.split(';').map((field) => field.trim());
+
+            const postcodeField = (fields[6] || '').trim();
+            const addressLines = fields.slice(3, 6).filter(Boolean);
+            const postcodeFromField = postcodeField.match(UK_POSTCODE_RE)?.[1]
+                || fields.map((field) => field.match(UK_POSTCODE_RE)?.[1]).find(Boolean);
+
+            if (addressLines.length > 0) {
+                const address = [...addressLines, postcodeFromField || postcodeField].filter(Boolean).join(', ');
+                return { address, postcode: postcodeFromField || postcodeField || null };
+            }
+
+            if (postcodeField) {
+                return { address: postcodeField, postcode: postcodeFromField || postcodeField };
+            }
+
+            for (const field of fields) {
+                const postcode = field.match(UK_POSTCODE_RE)?.[1];
+                if (postcode) {
+                    return { address: field, postcode };
+                }
+            }
+        }
+
+        if (/^https?:\/\//i.test(trimmed)) {
+            try {
+                const url = new URL(trimmed);
+                const postcode = url.searchParams.get('postcode')
+                    || url.searchParams.get('pc')
+                    || url.pathname.match(UK_POSTCODE_RE)?.[1];
+                const address = url.searchParams.get('address') || postcode;
+                if (address) {
+                    return { address, postcode: postcode || address.match(UK_POSTCODE_RE)?.[1] || null };
+                }
+            } catch (error) {
+                console.warn('Could not parse QR URL:', error);
+            }
+        }
+
+        const postcode = trimmed.match(UK_POSTCODE_RE)?.[1];
+        if (postcode && trimmed.length <= 12) {
+            return { address: postcode, postcode };
+        }
+
+        return { address: trimmed, postcode: postcode || null };
+    }
+
     async function routeAddress(address, source = 'manual') {
         const output = document.getElementById('resultOutput');
         output.innerHTML = '<em>Transmitting to server...</em>';
 
-        const response = await fetch(`${API_BASE}/api/route-delivery`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ address, source })
-        });
+        let response;
+        try {
+            response = await fetch(`${API_BASE}/api/route-delivery`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ address, source })
+            });
+        } catch (error) {
+            throw new Error('Cannot reach server — is it running? Open this page via http://localhost:3000 or your Railway URL.');
+        }
 
-        const data = await response.json();
+        let data;
+        try {
+            data = await response.json();
+        } catch (error) {
+            throw new Error('Server returned an invalid response');
+        }
 
         if (!response.ok || !data.success) {
             throw new Error(data.message || 'Routing failed');
@@ -220,9 +279,19 @@
         document.getElementById('batch-log').innerHTML = '';
     }
 
-    function startScanner() {
+    function onBarcodeDetected(decodedText) {
+        if (isRouting) return;
+
+        const now = Date.now();
+        if (decodedText === lastScanned && now - lastScannedTime < SCAN_COOLDOWN_MS) return;
+
+        lastScanned = decodedText;
+        lastScannedTime = now;
+        handleQRResult(decodedText);
+    }
+
+    async function startScanner() {
         const container = document.getElementById('qr-scanner-container');
-        const video = document.getElementById('qr-video');
         const scanBtn = document.getElementById('scan-btn');
         const stopBtn = document.getElementById('stop-scan-btn');
         const status = document.getElementById('scan-status');
@@ -232,87 +301,100 @@
             return;
         }
 
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-            .then((stream) => {
-                videoStream = stream;
-                video.srcObject = stream;
-                container.style.display = 'block';
-                scanBtn.style.display = 'none';
-                stopBtn.style.display = 'block';
-                status.textContent = 'Camera active — point at a delivery label QR code';
-                requestAnimationFrame(scanFrame);
-            })
-            .catch((err) => {
-                status.innerHTML = '<span class="error">Camera access denied. Please allow camera permission.</span>';
-                console.error('Camera error:', err);
-            });
+        if (html5QrCode) {
+            await stopScanner();
+        }
+
+        container.style.display = 'block';
+        container.innerHTML = '';
+        scanBtn.style.display = 'none';
+        stopBtn.style.display = 'block';
+        status.textContent = 'Starting camera…';
+
+        html5QrCode = new Html5Qrcode('qr-scanner-container', {
+            formatsToSupport: BARCODE_FORMATS,
+            verbose: false
+        });
+
+        try {
+            await html5QrCode.start(
+                { facingMode: 'environment' },
+                {
+                    fps: 12,
+                    qrbox: (viewfinderWidth, viewfinderHeight) => {
+                        const width = Math.floor(viewfinderWidth * 0.92);
+                        const height = Math.floor(Math.min(viewfinderHeight * 0.55, width * 0.55));
+                        return { width, height };
+                    },
+                    aspectRatio: 1.333
+                },
+                onBarcodeDetected,
+                () => {}
+            );
+            status.textContent = 'Camera active — centre the barcode on the label in the frame';
+        } catch (err) {
+            console.error('Scanner error:', err);
+            status.innerHTML = '<span class="error">Camera access denied or unavailable. Please allow camera permission and try again.</span>';
+            scanBtn.style.display = 'block';
+            stopBtn.style.display = 'none';
+            container.style.display = 'none';
+            html5QrCode = null;
+        }
     }
 
-    function stopScanner() {
-        if (videoStream) {
-            videoStream.getTracks().forEach(track => track.stop());
-            videoStream = null;
-        }
-        if (scanLoop) {
-            cancelAnimationFrame(scanLoop);
-            scanLoop = null;
-        }
-        document.getElementById('qr-scanner-container').style.display = 'none';
-        document.getElementById('scan-btn').style.display = 'block';
-        document.getElementById('stop-scan-btn').style.display = 'none';
-        document.getElementById('scan-status').textContent = 'Scanner stopped.';
-    }
+    async function stopScanner() {
+        const scanBtn = document.getElementById('scan-btn');
+        const stopBtn = document.getElementById('stop-scan-btn');
+        const container = document.getElementById('qr-scanner-container');
+        const status = document.getElementById('scan-status');
 
-    function scanFrame() {
-        const video = document.getElementById('qr-video');
-        const canvas = document.getElementById('qr-canvas');
-
-        if (!videoStream) return;
-
-        if (video.readyState === video.HAVE_ENOUGH_DATA) {
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'dontInvert' });
-
-            if (code) {
-                const now = Date.now();
-                const isDuplicate = code.data === lastScanned && now - lastScannedTime < SCAN_COOLDOWN_MS;
-
-                if (!isDuplicate) {
-                    lastScanned = code.data;
-                    lastScannedTime = now;
-                    handleQRResult(code.data);
-                }
+        if (html5QrCode) {
+            try {
+                await html5QrCode.stop();
+                html5QrCode.clear();
+            } catch (err) {
+                console.warn('Scanner stop:', err);
             }
+            html5QrCode = null;
         }
 
-        scanLoop = requestAnimationFrame(scanFrame);
+        container.innerHTML = '';
+        container.style.display = 'none';
+        scanBtn.style.display = 'block';
+        stopBtn.style.display = 'none';
+        status.textContent = 'Scanner stopped.';
     }
 
     async function handleQRResult(raw) {
-        const fields = raw.split(';');
-        const postcode = (fields[6] || '').trim();
         const status = document.getElementById('scan-status');
+        const parsed = parseLabelQR(raw);
 
-        if (!postcode) {
-            status.innerHTML = '<span class="error">QR scanned but postcode field was empty.</span>';
+        console.log('QR raw:', raw);
+        console.log('QR parsed:', parsed);
+
+        if (!parsed?.address) {
+            const preview = escapeHtml(raw.slice(0, 80));
+            status.innerHTML = `<span class="error">QR scanned but no address could be read. Data: "${preview}${raw.length > 80 ? '…' : ''}"</span>`;
             return;
         }
 
-        document.getElementById('addressInput').value = postcode;
-        status.innerHTML = `<span class="status">Scanned: <strong>${escapeHtml(postcode)}</strong> — routing...</span>`;
+        const { address, postcode } = parsed;
+        const displayLabel = postcode || address;
 
+        document.getElementById('addressInput').value = address;
+        status.innerHTML = `<span class="status">Scanned: <strong>${escapeHtml(displayLabel)}</strong> — routing...</span>`;
+
+        isRouting = true;
         try {
-            const data = await routeAddress(postcode, 'qr');
-            addToBatchLog(postcode, data.zone);
-            status.innerHTML = `<span class="status">${escapeHtml(postcode)} → ${escapeHtml(data.zone)} — ready for next scan</span>`;
+            const data = await routeAddress(address, 'qr');
+            addToBatchLog(displayLabel, data.zone);
+            status.innerHTML = `<span class="status">${escapeHtml(displayLabel)} → ${escapeHtml(data.zone)} — ready for next scan</span>`;
         } catch (error) {
             document.getElementById('resultOutput').innerHTML = `<span class="error">${escapeHtml(error.message)}</span>`;
-            status.innerHTML = `<span class="error">Could not route ${escapeHtml(postcode)}</span>`;
-            addToBatchLog(postcode, 'Unmatched');
+            status.innerHTML = `<span class="error">Could not route ${escapeHtml(displayLabel)}</span>`;
+            addToBatchLog(displayLabel, 'Unmatched');
+        } finally {
+            isRouting = false;
         }
     }
 
