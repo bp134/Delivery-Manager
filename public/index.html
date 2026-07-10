@@ -108,6 +108,10 @@
 <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js"></script>
 
 <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./service-worker.js');
+  }
+<script>
     const API_BASE = window.location.origin;
     const map = L.map('map').setView([53.6136, -2.1620], 12);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
@@ -524,10 +528,7 @@
         console.error('Failed to load zones:', error);
         document.getElementById('activeZones').innerHTML = '<span class="error">Failed to load delivery zones</span>';
     });
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./service-worker.js');
-  }
+
 </script>
 </body>
 </html>
