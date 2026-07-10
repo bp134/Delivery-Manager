@@ -72,17 +72,16 @@
                 <div id="qr-scanner-container">
                     <video id="qr-video" autoplay muted playsinline></video>
                     <canvas id="qr-canvas"></canvas>
+                    <canvas id="qr-crop-canvas" style="display:none"></canvas>
                     <div id="qr-overlay">
                         <svg viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="2" y="2" width="50" height="50" rx="6" stroke="white" stroke-width="4" fill="none"/>
-                            <rect x="128" y="2" width="50" height="50" rx="6" stroke="white" stroke-width="4" fill="none"/>
-                            <rect x="2" y="128" width="50" height="50" rx="6" stroke="white" stroke-width="4" fill="none"/>
-                            <rect x="128" y="128" width="50" height="50" rx="6" stroke="white" stroke-width="4" fill="none"/>
+                            <rect x="30" y="30" width="120" height="120" rx="4" stroke="white" stroke-width="3" fill="none" stroke-dasharray="8 6"/>
+                            <text x="90" y="170" text-anchor="middle" fill="white" font-size="11" font-family="sans-serif">Data Matrix</text>
                         </svg>
                     </div>
                 </div>
 
-                <div id="scan-status">Press "Start Camera &amp; Scan" to begin</div>
+                <div id="scan-status">Press "Start Camera &amp; Scan" to begin — reads Data Matrix labels (PSL format)</div>
 
                 <div id="batch-log"></div>
                 <button id="clear-log-btn" type="button" onclick="clearBatchLog()">Clear scan log</button>
@@ -104,7 +103,7 @@
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://unpkg.com/jsqr@1.4.0/dist/jsQR.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js"></script>
 
 <script>
     const API_BASE = window.location.origin;
@@ -116,13 +115,243 @@
 
     let currentMarker = null;
 
-    // ── QR SCANNER (from working delivery sorter) ───────────────────
+    // ── LABEL SCANNER (Data Matrix + QR) ────────────────────────────
     let videoStream = null;
     let scanLoop = null;
+    let scanActive = false;
+    let barcodeDetector = null;
+    let zxingReader = null;
+    let frameCount = 0;
+    let decodeBusy = false;
     let lastScanned = '';
     let lastScannedTime = 0;
     const SCAN_COOLDOWN_MS = 3000;
     let batchLog = [];
+
+    function initZxingReader() {
+        if (typeof ZXing === 'undefined') return null;
+
+        const hints = new Map();
+        hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, [
+            ZXing.BarcodeFormat.DATA_MATRIX,
+            ZXing.BarcodeFormat.QR_CODE
+        ]);
+        hints.set(ZXing.DecodeHintType.TRY_HARDER, true);
+
+        return new ZXing.BrowserMultiFormatReader(hints);
+    }
+
+    async function initBarcodeDetector() {
+        if (!('BarcodeDetector' in window)) return null;
+
+        try {
+            const supported = await BarcodeDetector.getSupportedFormats();
+            const formats = [];
+            if (supported.includes('data_matrix')) formats.push('data_matrix');
+            if (supported.includes('qr_code')) formats.push('qr_code');
+            if (formats.length === 0) return null;
+            return new BarcodeDetector({ formats });
+        } catch (error) {
+            console.warn('BarcodeDetector unavailable:', error);
+            return null;
+        }
+    }
+
+    zxingReader = initZxingReader();
+
+    function onBarcodeScanned(raw) {
+        const now = Date.now();
+        if (raw === lastScanned && now - lastScannedTime < SCAN_COOLDOWN_MS) return;
+        lastScanned = raw;
+        lastScannedTime = now;
+        handleQRResult(raw);
+    }
+
+    function drawVideoFrame(video, canvas, maxWidth) {
+        const scale = Math.min(1, maxWidth / video.videoWidth);
+        canvas.width = Math.max(1, Math.floor(video.videoWidth * scale));
+        canvas.height = Math.max(1, Math.floor(video.videoHeight * scale));
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        return canvas;
+    }
+
+    function decodeWithZxing(canvas) {
+        if (!zxingReader || decodeBusy) return;
+        decodeBusy = true;
+
+        try {
+            const result = zxingReader.decodeFromCanvas(canvas);
+            if (result) onBarcodeScanned(result.getText());
+        } catch (error) {
+            if (typeof ZXing !== 'undefined' && error instanceof ZXing.NotFoundException) return;
+            if (error && error.name === 'NotFoundException') return;
+        } finally {
+            decodeBusy = false;
+        }
+    }
+
+    function decodeCenterCrop(video, cropCanvas) {
+        if (!zxingReader || decodeBusy) return;
+
+        const vw = video.videoWidth;
+        const vh = video.videoHeight;
+        if (!vw || !vh) return;
+
+        const size = Math.floor(Math.min(vw, vh) * 0.65);
+        const sx = Math.floor((vw - size) / 2);
+        const sy = Math.floor((vh - size) / 2);
+
+        cropCanvas.width = size;
+        cropCanvas.height = size;
+        const ctx = cropCanvas.getContext('2d', { willReadFrequently: true });
+        ctx.drawImage(video, sx, sy, size, size, 0, 0, size, size);
+
+        decodeBusy = true;
+        try {
+            const result = zxingReader.decodeFromCanvas(cropCanvas);
+            if (result) onBarcodeScanned(result.getText());
+        } catch (error) {
+            if (typeof ZXing !== 'undefined' && error instanceof ZXing.NotFoundException) return;
+            if (error && error.name === 'NotFoundException') return;
+        } finally {
+            decodeBusy = false;
+        }
+    }
+
+    async function getCameraStream() {
+        const attempts = [
+            { video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } } },
+            { video: { width: { ideal: 1280 }, height: { ideal: 720 } } },
+            { video: true }
+        ];
+
+        let lastError = null;
+        for (const constraints of attempts) {
+            try {
+                return await navigator.mediaDevices.getUserMedia(constraints);
+            } catch (error) {
+                lastError = error;
+            }
+        }
+        throw lastError || new Error('No camera available');
+    }
+
+    window.startScanner = async function() {
+        const container = document.getElementById('qr-scanner-container');
+        const video = document.getElementById('qr-video');
+        const scanBtn = document.getElementById('scan-btn');
+        const stopBtn = document.getElementById('stop-scan-btn');
+        const status = document.getElementById('scan-status');
+
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            status.innerHTML = '<span style="color:#dc2626">Camera not supported. Use Chrome on your phone.</span>';
+            return;
+        }
+
+        if (!zxingReader && !('BarcodeDetector' in window)) {
+            status.innerHTML = '<span style="color:#dc2626">Scanner library failed to load. Refresh the page (needs internet once).</span>';
+            return;
+        }
+
+        scanBtn.disabled = true;
+        status.textContent = 'Starting camera…';
+
+        try {
+            if (!zxingReader) zxingReader = initZxingReader();
+            barcodeDetector = await initBarcodeDetector();
+
+            videoStream = await getCameraStream();
+            video.srcObject = videoStream;
+            video.setAttribute('playsinline', '');
+            video.muted = true;
+
+            const playPromise = video.play();
+            if (playPromise && typeof playPromise.catch === 'function') {
+                await playPromise;
+            }
+
+            const track = videoStream.getVideoTracks()[0];
+            if (track) {
+                track.addEventListener('ended', function() {
+                    if (!scanActive) return;
+                    document.getElementById('scan-status').innerHTML =
+                        '<span style="color:#dc2626">Camera stream ended. Press Start again.</span>';
+                    window.stopScanner();
+                });
+            }
+
+            scanActive = true;
+            frameCount = 0;
+            container.style.display = 'block';
+            scanBtn.style.display = 'none';
+            stopBtn.style.display = 'block';
+            scanBtn.disabled = false;
+
+            const decoderNote = barcodeDetector ? 'native + ZXing' : 'ZXing';
+            status.textContent = `Camera active (${decoderNote}) — hold the square Data Matrix barcode steady`;
+            scanLoop = requestAnimationFrame(scanFrame);
+        } catch (err) {
+            console.error('Camera error:', err);
+            scanActive = false;
+            scanBtn.disabled = false;
+            status.innerHTML = '<span style="color:#dc2626">Camera access denied or unavailable. Allow camera permission and try again.</span>';
+        }
+    };
+
+    window.stopScanner = function() {
+        scanActive = false;
+
+        if (scanLoop) {
+            cancelAnimationFrame(scanLoop);
+            scanLoop = null;
+        }
+
+        if (videoStream) {
+            videoStream.getTracks().forEach(function(track) { track.stop(); });
+            videoStream = null;
+        }
+
+        const video = document.getElementById('qr-video');
+        if (video) video.srcObject = null;
+
+        document.getElementById('qr-scanner-container').style.display = 'none';
+        document.getElementById('scan-btn').style.display = 'block';
+        document.getElementById('stop-scan-btn').style.display = 'none';
+        document.getElementById('scan-status').textContent = 'Scanner stopped. Press "Start Camera & Scan" to resume.';
+    };
+
+    function scanFrame() {
+        if (!scanActive || !videoStream) return;
+
+        const video = document.getElementById('qr-video');
+        const canvas = document.getElementById('qr-canvas');
+        const cropCanvas = document.getElementById('qr-crop-canvas');
+
+        try {
+            if (video.readyState >= video.HAVE_ENOUGH_DATA && video.videoWidth > 0) {
+                drawVideoFrame(video, canvas, 960);
+                frameCount++;
+
+                if (barcodeDetector && frameCount % 3 === 0) {
+                    barcodeDetector.detect(canvas)
+                        .then(function(codes) {
+                            if (codes.length > 0) onBarcodeScanned(codes[0].rawValue);
+                        })
+                        .catch(function() {});
+                }
+
+                if (zxingReader && !decodeBusy) {
+                    if (frameCount % 4 === 0) decodeWithZxing(canvas);
+                    else if (frameCount % 4 === 2) decodeCenterCrop(video, cropCanvas);
+                }
+            }
+        } catch (error) {
+            console.warn('Scan frame error:', error);
+        }
+
+        scanLoop = requestAnimationFrame(scanFrame);
+    }
 
     function escapeHtml(value) {
         return String(value)
@@ -149,85 +378,13 @@
         `;
     }
 
-    function startScanner() {
-        const container = document.getElementById('qr-scanner-container');
-        const video = document.getElementById('qr-video');
-        const scanBtn = document.getElementById('scan-btn');
-        const stopBtn = document.getElementById('stop-scan-btn');
-        const status = document.getElementById('scan-status');
-
-        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-            status.innerHTML = '<span style="color:#dc2626">Camera not supported on this browser. Use Chrome on Android.</span>';
-            return;
-        }
-
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-            .then(function(stream) {
-                videoStream = stream;
-                video.srcObject = stream;
-                container.style.display = 'block';
-                scanBtn.style.display = 'none';
-                stopBtn.style.display = 'block';
-                status.textContent = 'Camera active — point at a delivery label QR code';
-                requestAnimationFrame(scanFrame);
-            })
-            .catch(function(err) {
-                status.innerHTML = '<span style="color:#dc2626">Camera access denied. Please allow camera permission in your browser.</span>';
-                console.error('Camera error:', err);
-            });
-    }
-
-    function stopScanner() {
-        if (videoStream) {
-            videoStream.getTracks().forEach(function(track) { track.stop(); });
-            videoStream = null;
-        }
-        if (scanLoop) {
-            cancelAnimationFrame(scanLoop);
-            scanLoop = null;
-        }
-        document.getElementById('qr-scanner-container').style.display = 'none';
-        document.getElementById('scan-btn').style.display = 'block';
-        document.getElementById('stop-scan-btn').style.display = 'none';
-        document.getElementById('scan-status').textContent = 'Scanner stopped. Press "Start Camera & Scan" to resume.';
-    }
-
-    function scanFrame() {
-        const video = document.getElementById('qr-video');
-        const canvas = document.getElementById('qr-canvas');
-
-        if (!videoStream) return;
-
-        if (video.readyState === video.HAVE_ENOUGH_DATA) {
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'dontInvert' });
-
-            if (code) {
-                const now = Date.now();
-                const isDuplicate = (code.data === lastScanned) && (now - lastScannedTime < SCAN_COOLDOWN_MS);
-
-                if (!isDuplicate) {
-                    lastScanned = code.data;
-                    lastScannedTime = now;
-                    handleQRResult(code.data);
-                }
-            }
-        }
-
-        scanLoop = requestAnimationFrame(scanFrame);
-    }
-
     function handleQRResult(raw) {
         const fields = raw.split(';');
         const postcode = (fields[6] || '').trim();
         const status = document.getElementById('scan-status');
 
         if (!postcode) {
-            status.innerHTML = '<span style="color:#dc2626">QR scanned but postcode field was empty. Check label format.</span>';
+            status.innerHTML = '<span style="color:#dc2626">Label scanned but postcode field was empty. Hold the square barcode steady in the centre.</span>';
             return;
         }
 
@@ -292,7 +449,7 @@
         }).join('');
     }
 
-    function clearBatchLog() {
+    window.clearBatchLog = function() {
         batchLog = [];
         document.getElementById('batch-log').style.display = 'none';
         document.getElementById('clear-log-btn').style.display = 'none';
