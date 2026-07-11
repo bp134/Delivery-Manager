@@ -105,7 +105,8 @@
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.23.0/umd/index.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@zxing/browser@0.2.1/umd/zxing-browser.min.js"></script>
 <script>
     const API_BASE = window.location.origin;
     const map = L.map('map').setView([53.6136, -2.1620], 12);
@@ -136,7 +137,7 @@
     let batchLog = [];
 
     function initZxingReader() {
-        if (typeof ZXing === 'undefined') return null;
+        if (typeof ZXing === 'undefined' || typeof ZXingBrowser === 'undefined') return null;
 
         const hints = new Map();
         hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, [
@@ -145,7 +146,7 @@
         ]);
         hints.set(ZXing.DecodeHintType.TRY_HARDER, true);
 
-        return new ZXing.BrowserMultiFormatReader(hints);
+        return new ZXingBrowser.BrowserMultiFormatReader(hints);
     }
 
     async function initBarcodeDetector() {
