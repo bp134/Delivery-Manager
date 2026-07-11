@@ -45,6 +45,10 @@ module.exports = {
         // Railway injects PORT automatically — do not hardcode PORT=3000 in Railway variables.
         port: Number(process.env.PORT) || 3000,
         corsOrigin: process.env.CORS_ORIGIN || null,
-        isRailway: Boolean(process.env.RAILWAY_ENVIRONMENT)
+        isRailway: Boolean(
+            process.env.RAILWAY_ENVIRONMENT ||
+            process.env.RAILWAY_SERVICE_ID ||
+            process.env.RAILWAY_PROJECT_ID
+        )
     }
 };

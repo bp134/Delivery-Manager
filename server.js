@@ -1,4 +1,5 @@
 const path = require('path');
+const http = require('http');
 const express = require('express');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
@@ -8,10 +9,11 @@ const { routeDelivery } = require('./lib/routing');
 const { checkDbConnection, initDatabase, closeDatabase } = require('./lib/db');
 
 const app = express();
+const isRailway = config.server.isRailway;
 const port = Number(process.env.PORT) || config.server.port || 3000;
+const host = process.env.HOST || '0.0.0.0';
 
-// Required when running behind Railway's reverse proxy (rate limiting, client IP).
-if (config.server.isRailway) {
+if (isRailway || process.env.NODE_ENV === 'production') {
     app.set('trust proxy', 1);
 }
 
@@ -29,9 +31,14 @@ const routeLimiter = rateLimit({
     message: { success: false, message: 'Too many requests — please wait a moment' }
 });
 
-// Instant liveness probe for Railway — no database or external calls.
 app.get('/api/health/live', (_req, res) => {
-    res.status(200).json({ status: 'ok', uptime: process.uptime() });
+    res.status(200).json({
+        status: 'ok',
+        uptime: process.uptime(),
+        port,
+        host,
+        pid: process.pid
+    });
 });
 
 app.get('/api/health', async (_req, res) => {
@@ -45,8 +52,9 @@ app.get('/api/health', async (_req, res) => {
             tableReady: dbStatus.tableReady,
             databaseError: dbStatus.error || null,
             geocodeConfigured: Boolean(config.api.geocodeKey),
-            platform: config.server.isRailway ? 'railway' : 'local',
-            port
+            platform: isRailway ? 'railway' : 'local',
+            port,
+            host
         });
     } catch (error) {
         console.error('Health check error:', error);
@@ -76,14 +84,41 @@ app.post('/api/route-delivery', routeLimiter, async (req, res) => {
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-const server = app.listen(port, '0.0.0.0', () => {
+function logStartupEnv() {
+    const railwayVars = Object.keys(process.env)
+        .filter((key) => key.startsWith('RAILWAY_') || key === 'PORT' || key === 'HOST')
+        .sort()
+        .reduce((acc, key) => {
+            acc[key] = process.env[key];
+            return acc;
+        }, {});
+
+    console.log('Startup environment:', railwayVars);
+}
+
+const server = http.createServer(app);
+
+server.listen(port, host, () => {
     const address = server.address();
-    console.log(`Server running on port ${port} (${config.server.isRailway ? 'railway' : 'local'})`);
+    console.log(`Server running on ${host}:${port} (${isRailway ? 'railway' : 'local'})`);
     console.log('Listening on', address);
+    logStartupEnv();
+
+    if (isRailway) {
+        console.log(
+            'If you still see 502: open Service -> Settings -> Networking, ' +
+            'delete the public domain, generate a new one, and set Target Port to ' +
+            `${port}. Also confirm this domain is attached to THIS service (not another).`
+        );
+    }
 
     initDatabase().catch((error) => {
         console.error('Database init failed:', error.message);
     });
+
+    setTimeout(() => {
+        console.log(`[heartbeat] pid=${process.pid} uptime=${Math.floor(process.uptime())}s still listening on ${port}`);
+    }, 10000);
 });
 
 server.on('error', (error) => {
@@ -99,7 +134,10 @@ function shutdown() {
 }
 
 process.on('SIGINT', shutdown);
-process.on('SIGTERM', shutdown);
+process.on('SIGTERM', () => {
+    console.log('Received SIGTERM, shutting down...');
+    shutdown();
+});
 process.on('unhandledRejection', (error) => {
     console.error('Unhandled rejection:', error);
 });

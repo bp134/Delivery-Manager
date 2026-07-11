@@ -135,6 +135,55 @@ A working database connection returns:
 
 If disconnected, `databaseError` will show the reason (e.g. firewall timeout, wrong password, SSL error).
 
+### 5. Fix 502 / "connection refused" (app starts but site returns 502)
+
+If deploy logs show `Server running on port 8080` but the public URL returns **502 Bad Gateway** with `connection refused` in HTTP logs, the app is running but **Railway cannot route traffic to your container**.
+
+**Step A — Regenerate the public domain (most reliable fix):**
+
+1. Railway → your service → **Settings** → **Networking**
+2. Confirm **Public Networking** is enabled
+3. **Delete** the existing `*.up.railway.app` domain
+4. Click **Generate Domain** to create a fresh one
+5. When prompted for **Target Port**, choose the port from deploy logs (usually **8080**)
+6. Wait 30 seconds, then test `/api/health/live`
+
+**Step B — Confirm the domain is on the correct service:**
+
+If your Railway project has multiple services (e.g. a database + app), make sure the public domain is attached to the **Node.js app service** that runs `server.js`, not another service.
+
+**Step C — Check deploy logs after 10 seconds:**
+
+After deploy, you should see:
+
+```
+[heartbeat] pid=... uptime=10s still listening on 8080
+```
+
+If the heartbeat appears but the site still 502s, the domain target port is still wrong — repeat Step A.
+
+If the heartbeat never appears, the process is crashing after startup — scroll deploy logs for `Uncaught exception` or `SIGTERM`.
+
+**Step D — Remove committed `node_modules` from GitHub:**
+
+This repo currently tracks `node_modules/` in git, which can break Railway builds. Run locally:
+
+```bash
+git rm -r --cached node_modules
+git commit -m "Stop tracking node_modules"
+git push
+```
+
+The new `Dockerfile` builds dependencies cleanly on Railway and ignores local `node_modules`.
+
+Verify:
+
+```
+https://your-app.up.railway.app/api/health/live
+```
+
+You should get `{"status":"ok","uptime":...,"port":8080}` — not a 502 page.
+
 ### Troubleshooting database connection
 
 | `databaseError` | Fix |
