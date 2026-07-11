@@ -8,6 +8,7 @@ const { routeDelivery } = require('./lib/routing');
 const { checkDbConnection, initDatabase, closeDatabase } = require('./lib/db');
 
 const app = express();
+const port = Number(process.env.PORT) || config.server.port || 3000;
 
 // Required when running behind Railway's reverse proxy (rate limiting, client IP).
 if (config.server.isRailway) {
@@ -28,19 +29,32 @@ const routeLimiter = rateLimit({
     message: { success: false, message: 'Too many requests — please wait a moment' }
 });
 
-app.get('/api/health', async (_req, res) => {
-    const dbStatus = await checkDbConnection();
+// Instant liveness probe for Railway — no database or external calls.
+app.get('/api/health/live', (_req, res) => {
+    res.status(200).json({ status: 'ok', uptime: process.uptime() });
+});
 
-    res.json({
-        status: 'ok',
-        database: dbStatus.connected ? 'connected' : 'disconnected',
-        databaseConfigured: dbStatus.configured,
-        tableReady: dbStatus.tableReady,
-        databaseError: dbStatus.error || null,
-        geocodeConfigured: Boolean(config.api.geocodeKey),
-        platform: config.server.isRailway ? 'railway' : 'local',
-        port: config.server.port
-    });
+app.get('/api/health', async (_req, res) => {
+    try {
+        const dbStatus = await checkDbConnection();
+
+        res.json({
+            status: 'ok',
+            database: dbStatus.connected ? 'connected' : 'disconnected',
+            databaseConfigured: dbStatus.configured,
+            tableReady: dbStatus.tableReady,
+            databaseError: dbStatus.error || null,
+            geocodeConfigured: Boolean(config.api.geocodeKey),
+            platform: config.server.isRailway ? 'railway' : 'local',
+            port
+        });
+    } catch (error) {
+        console.error('Health check error:', error);
+        res.status(500).json({
+            status: 'error',
+            message: error.message
+        });
+    }
 });
 
 app.get('/api/zones', (_req, res) => {
@@ -62,11 +76,19 @@ app.post('/api/route-delivery', routeLimiter, async (req, res) => {
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-const server = app.listen(config.server.port, '0.0.0.0', () => {
-    console.log(`Server running on port ${config.server.port} (${config.server.isRailway ? 'railway' : 'local'})`);
+const server = app.listen(port, '0.0.0.0', () => {
+    const address = server.address();
+    console.log(`Server running on port ${port} (${config.server.isRailway ? 'railway' : 'local'})`);
+    console.log('Listening on', address);
+
     initDatabase().catch((error) => {
         console.error('Database init failed:', error.message);
     });
+});
+
+server.on('error', (error) => {
+    console.error('Server listen error:', error);
+    process.exit(1);
 });
 
 function shutdown() {
