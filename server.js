@@ -9,12 +9,16 @@ const { checkDbConnection, initDatabase, closeDatabase } = require('./lib/db');
 
 const app = express();
 
+// Required when running behind Railway's reverse proxy (rate limiting, client IP).
+if (config.server.isRailway) {
+    app.set('trust proxy', 1);
+}
+
 if (config.server.corsOrigin) {
     app.use(cors({ origin: config.server.corsOrigin }));
 }
 
 app.use(express.json({ limit: '16kb' }));
-app.use(express.static(path.join(__dirname, 'public')));
 
 const routeLimiter = rateLimit({
     windowMs: 60 * 1000,
@@ -34,7 +38,8 @@ app.get('/api/health', async (_req, res) => {
         tableReady: dbStatus.tableReady,
         databaseError: dbStatus.error || null,
         geocodeConfigured: Boolean(config.api.geocodeKey),
-        platform: process.env.RAILWAY_ENVIRONMENT ? 'railway' : 'local'
+        platform: config.server.isRailway ? 'railway' : 'local',
+        port: config.server.port
     });
 });
 
@@ -55,9 +60,13 @@ app.post('/api/route-delivery', routeLimiter, async (req, res) => {
     }
 });
 
-const server = app.listen(config.server.port, '0.0.0.0', async () => {
-    console.log(`Server running on port ${config.server.port}`);
-    await initDatabase();
+app.use(express.static(path.join(__dirname, 'public')));
+
+const server = app.listen(config.server.port, '0.0.0.0', () => {
+    console.log(`Server running on port ${config.server.port} (${config.server.isRailway ? 'railway' : 'local'})`);
+    initDatabase().catch((error) => {
+        console.error('Database init failed:', error.message);
+    });
 });
 
 function shutdown() {
@@ -69,3 +78,10 @@ function shutdown() {
 
 process.on('SIGINT', shutdown);
 process.on('SIGTERM', shutdown);
+process.on('unhandledRejection', (error) => {
+    console.error('Unhandled rejection:', error);
+});
+process.on('uncaughtException', (error) => {
+    console.error('Uncaught exception:', error);
+    process.exit(1);
+});

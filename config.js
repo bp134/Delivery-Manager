@@ -42,7 +42,9 @@ module.exports = {
         geocodeKey: process.env.GEOCODE_API_KEY
     },
     server: {
+        // Railway injects PORT automatically — do not hardcode PORT=3000 in Railway variables.
         port: Number(process.env.PORT) || 3000,
-        corsOrigin: process.env.CORS_ORIGIN || null
+        corsOrigin: process.env.CORS_ORIGIN || null,
+        isRailway: Boolean(process.env.RAILWAY_ENVIRONMENT)
     }
 };
