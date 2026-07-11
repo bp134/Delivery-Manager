@@ -121,7 +121,7 @@
     navigator.serviceWorker.register('./service-worker.js');
   }
 </script>
-
+<script>
     // ── LABEL SCANNER (Data Matrix + QR) ────────────────────────────
     let videoStream = null;
     let scanLoop = null;
@@ -530,6 +530,7 @@
         document.getElementById('activeZones').innerHTML = '<span class="error">Failed to load delivery zones</span>';
     });
 
+</script>    
 </body>
 </html>
 
