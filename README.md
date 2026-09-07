@@ -51,7 +51,7 @@ psql "host=YOUR_SERVER.postgres.database.azure.com dbname=YOUR_DB user=YOUR_USER
 npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:4000](http://localhost:4000).
 
 For auto-restart during development:
 

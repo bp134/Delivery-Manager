@@ -10,7 +10,7 @@ const { checkDbConnection, initDatabase, closeDatabase } = require('./lib/db');
 
 const app = express();
 const isRailway = config.server.isRailway;
-const port = Number(process.env.PORT) || config.server.port || 3000;
+const port = Number(process.env.PORT) || config.server.port || 4000;
 const host = process.env.HOST || '0.0.0.0';
 
 if (isRailway || process.env.NODE_ENV === 'production') {
