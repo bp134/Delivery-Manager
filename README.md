@@ -205,3 +205,20 @@ You should get `{"status":"ok","uptime":...,"port":8080}` — not a 502 page.
 ## Updating delivery zones
 
 Edit `zones.json` — each feature should include a `properties.name` field.
+
+## Zone assignment and review flags
+
+Each delivery is assigned in this order:
+
+1. **Inside a zone** (`polygon`): the address falls inside one of the zones in `zones.json`.
+2. **Nearest-zone safety net** (`nearest`): the address is outside every zone but within `NEAREST_ZONE_MAX_METRES` (default 200 m) of one. It is given the nearest zone and **flagged for review**.
+3. **Unclassified** (`unclassified`): further away than the safety net. Also flagged for review.
+
+The method, review flag and reason are saved in `delivery_manifests` (`assignment_method`, `needs_review`, `review_reason`) and shown on screen. To see deliveries that need checking:
+
+```sql
+SELECT processed_at, scanned_address, assigned_grouping, assignment_method, review_reason
+FROM delivery_manifests WHERE needs_review ORDER BY processed_at DESC;
+```
+
+Run tests with `npm test`.
