@@ -370,8 +370,8 @@
     }
 
     function renderResult(address, data) {
-        const overlapNote = data.overlap
-            ? `<div class="warning">Overlapping zones detected: ${escapeHtml((data.allMatches || []).join(', '))}</div>`
+        const reviewNote = data.needsReview
+            ? `<div class="warning"><strong>Check this delivery:</strong> ${escapeHtml(data.reviewReason || 'Zone could not be confirmed')}</div>`
             : '';
         const loggedNote = data.logged
             ? '<div style="font-size: 0.8em; color: #64748b; margin-top: 5px;">Saved to database</div>'
@@ -381,7 +381,7 @@
             <div><strong>Address:</strong> ${escapeHtml(address)}</div>
             <hr style="border:0; border-top:1px solid #ccc; margin: 10px 0;">
             <div><strong>Assigned Grouping:</strong> <span class="status">${escapeHtml(data.zone)}</span></div>
-            ${overlapNote}
+            ${reviewNote}
             ${loggedNote}
         `;
     }
@@ -419,10 +419,11 @@
                 currentMarker = L.marker([data.lat, data.lng]).addTo(map).bindPopup(escapeHtml(postcode)).openPopup();
 
                 output.innerHTML = renderResult(postcode, data);
-                addToBatchLog(postcode, data.zone);
+                addToBatchLog(postcode, data.needsReview ? `${data.zone} (check)` : data.zone);
 
-                document.getElementById('scan-status').innerHTML =
-                    `<span style="color:#059669">✓ ${escapeHtml(postcode)} → ${escapeHtml(data.zone)} — ready for next scan</span>`;
+                document.getElementById('scan-status').innerHTML = data.needsReview
+                    ? `<span style="color:#b45309">⚠ ${escapeHtml(postcode)} → ${escapeHtml(data.zone)} — CHECK this one, then scan next label</span>`
+                    : `<span style="color:#059669">✓ ${escapeHtml(postcode)} → ${escapeHtml(data.zone)} — ready for next scan</span>`;
             } else {
                 output.innerHTML = `<span class="error">${escapeHtml(data.message || 'Routing failed')}</span>`;
                 document.getElementById('scan-status').innerHTML =

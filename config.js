@@ -35,11 +35,20 @@ function buildDbConfig() {
     };
 }
 
+function parseNearestZoneMetres(value) {
+    const metres = Number(value);
+    return Number.isFinite(metres) && metres >= 0 ? metres : 200;
+}
+
 module.exports = {
     db: buildDbConfig(),
     dbEnabled: isDbConfigured(),
     api: {
         geocodeKey: process.env.GEOCODE_API_KEY
+    },
+    routing: {
+        // Addresses outside every zone but within this distance are given the nearest zone and flagged for review.
+        nearestZoneMaxMetres: parseNearestZoneMetres(process.env.NEAREST_ZONE_MAX_METRES)
     },
     server: {
         // Railway injects PORT automatically — do not hardcode PORT=4000 in Railway variables.
