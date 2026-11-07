@@ -9,6 +9,5 @@ CREATE INDEX IF NOT EXISTS idx_delivery_manifests_needs_review
     ON delivery_manifests (needs_review)
     WHERE needs_review;
 
--- Deliveries waiting to be checked:
--- SELECT processed_at, scanned_address, assigned_grouping, assignment_method, review_reason
--- FROM delivery_manifests WHERE needs_review ORDER BY processed_at DESC;
+
+-- See README.md for a query listing deliveries that need checking.
