@@ -1511,11 +1511,14 @@ OL15 0AB,Milnrow/Newhey,seeded,false,53.626188,-2.112924,
 OL15 0AD,Milnrow/Newhey,seeded,false,53.625909,-2.102823,
 OL15 0AE,Milnrow/Newhey,seeded,false,53.635015,-2.101575,
 OL15 0AF,Milnrow/Newhey,seeded,false,53.627306,-2.118113,
+OL15 0AG,Smallbridge/Littleborough,check,false,53.63449,-2.083517,Added 2026-11-07: Littleborough coverage
+OL15 0AH,Smallbridge/Littleborough,check,false,53.630582,-2.080288,Added 2026-11-07: Littleborough coverage
 OL15 0AJ,Milnrow/Newhey,seeded,false,53.630478,-2.087985,
 OL15 0AL,Milnrow/Newhey,seeded,false,53.626632,-2.087553,
 OL15 0AN,Milnrow/Newhey,seeded,false,53.626461,-2.086858,
 OL15 0AP,Milnrow/Newhey,seeded,false,53.624332,-2.085145,
 OL15 0AQ,Milnrow/Newhey,seeded,false,53.631483,-2.090422,
+OL15 0AR,Smallbridge/Littleborough,check,false,53.625051,-2.071327,Added 2026-11-07: Littleborough coverage
 OL15 0AS,Milnrow/Newhey,seeded,false,53.624976,-2.090362,
 OL15 0AT,Milnrow/Newhey,seeded,false,53.625125,-2.094279,
 OL15 0AU,Milnrow/Newhey,seeded,false,53.640907,-2.096961,
@@ -1523,6 +1526,8 @@ OL15 0AW,Milnrow/Newhey,seeded,false,53.626435,-2.085829,
 OL15 0AX,Milnrow/Newhey,seeded,false,53.624801,-2.0838,
 OL15 0AY,Milnrow/Newhey,seeded,false,53.641789,-2.095465,
 OL15 0AZ,Milnrow/Newhey,seeded,false,53.634615,-2.096493,
+OL15 0BB,Smallbridge/Littleborough,check,false,53.644752,-2.087667,Added 2026-11-07: Littleborough coverage
+OL15 0BD,Smallbridge/Littleborough,check,false,53.644338,-2.088014,Added 2026-11-07: Littleborough coverage
 OL15 0BE,Milnrow/Newhey,seeded,false,53.627351,-2.118491,
 OL15 0BF,Milnrow/Newhey,seeded,false,53.632538,-2.107694,
 OL15 0BG,Milnrow/Newhey,seeded,false,53.632393,-2.109856,
@@ -1575,22 +1580,61 @@ OL15 0ET,Milnrow/Newhey,seeded,false,53.635396,-2.108427,
 OL15 0EU,Milnrow/Newhey,seeded,false,53.63185,-2.113105,
 OL15 0EW,Milnrow/Newhey,seeded,false,53.633012,-2.110114,
 OL15 0EX,Milnrow/Newhey,seeded,false,53.632609,-2.108813,
+OL15 0EY,Smallbridge/Littleborough,check,false,53.636523,-2.081086,Added 2026-11-07: Littleborough coverage
+OL15 0EZ,Smallbridge/Littleborough,check,false,53.645218,-2.08915,Added 2026-11-07: Littleborough coverage
 OL15 0FH,Milnrow/Newhey,seeded,false,53.637379,-2.101641,
 OL15 0FJ,Milnrow/Newhey,seeded,false,53.638468,-2.100358,
 OL15 0FL,Milnrow/Newhey,seeded,false,53.637702,-2.103139,
 OL15 0FN,Milnrow/Newhey,seeded,false,53.638179,-2.102309,
 OL15 0FP,Milnrow/Newhey,seeded,false,53.63818,-2.100312,
+OL15 0FR,Smallbridge/Littleborough,check,false,53.647786,-2.080669,Added 2026-11-07: Littleborough coverage
 OL15 0HA,Milnrow/Newhey,seeded,false,53.643085,-2.09326,
+OL15 0HB,Smallbridge/Littleborough,check,false,53.644579,-2.089981,Added 2026-11-07: Littleborough coverage
 OL15 0HD,Smallbridge/Littleborough,confirmed,false,53.643589,-2.0919,Reviewed 2026-11-07: moved from Milnrow/Newhey
 OL15 0HE,Smallbridge/Littleborough,confirmed,false,53.643589,-2.091854,Reviewed 2026-11-07: moved from Milnrow/Newhey
 OL15 0HF,Smallbridge/Littleborough,confirmed,false,53.643553,-2.091355,Reviewed 2026-11-07: moved from Milnrow/Newhey
 OL15 0HG,Smallbridge/Littleborough,confirmed,false,53.643662,-2.090947,Reviewed 2026-11-07: moved from Milnrow/Newhey
 OL15 0HH,Smallbridge/Littleborough,confirmed,false,53.643464,-2.090326,Reviewed 2026-11-07: moved from Milnrow/Newhey
+OL15 0HJ,Smallbridge/Littleborough,check,false,53.643106,-2.088692,Added 2026-11-07: Littleborough coverage
+OL15 0HL,Smallbridge/Littleborough,check,false,53.645218,-2.08915,Added 2026-11-07: Littleborough coverage
 OL15 0HN,Smallbridge/Littleborough,confirmed,false,53.644191,-2.091614,Reviewed 2026-11-07: moved from Milnrow/Newhey
 OL15 0HP,Smallbridge/Littleborough,confirmed,false,53.644048,-2.090691,Reviewed 2026-11-07: moved from Milnrow/Newhey
 OL15 0HQ,Smallbridge/Littleborough,confirmed,false,53.643635,-2.090523,Reviewed 2026-11-07: moved from Milnrow/Newhey
+OL15 0HR,Smallbridge/Littleborough,check,false,53.645587,-2.088243,Added 2026-11-07: Littleborough coverage
+OL15 0HS,Smallbridge/Littleborough,check,false,53.644895,-2.088771,Added 2026-11-07: Littleborough coverage
+OL15 0HT,Smallbridge/Littleborough,check,false,53.644877,-2.088786,Added 2026-11-07: Littleborough coverage
 OL15 0HW,Smallbridge/Littleborough,confirmed,false,53.644443,-2.091357,Reviewed 2026-11-07: moved from Milnrow/Newhey
+OL15 0HX,Smallbridge/Littleborough,check,false,53.645514,-2.089484,Added 2026-11-07: Littleborough coverage
+OL15 0HY,Smallbridge/Littleborough,check,false,53.645363,-2.086942,Added 2026-11-07: Littleborough coverage
+OL15 0HZ,Smallbridge/Littleborough,check,false,53.646281,-2.086445,Added 2026-11-07: Littleborough coverage
+OL15 0JA,Smallbridge/Littleborough,check,false,53.646245,-2.08652,Added 2026-11-07: Littleborough coverage
+OL15 0JB,Smallbridge/Littleborough,check,false,53.649321,-2.082351,Added 2026-11-07: Littleborough coverage
+OL15 0JD,Smallbridge/Littleborough,check,false,53.644023,-2.088875,Added 2026-11-07: Littleborough coverage
+OL15 0JG,Smallbridge/Littleborough,check,false,53.647838,-2.082273,Added 2026-11-07: Littleborough coverage
+OL15 0JH,Smallbridge/Littleborough,check,false,53.647155,-2.083421,Added 2026-11-07: Littleborough coverage
+OL15 0JJ,Smallbridge/Littleborough,check,false,53.646716,-2.080395,Added 2026-11-07: Littleborough coverage
+OL15 0JL,Smallbridge/Littleborough,check,false,53.646634,-2.081816,Added 2026-11-07: Littleborough coverage
+OL15 0JN,Smallbridge/Littleborough,check,false,53.64658,-2.083042,Added 2026-11-07: Littleborough coverage
+OL15 0JP,Smallbridge/Littleborough,check,false,53.645434,-2.088364,Added 2026-11-07: Littleborough coverage
+OL15 0JQ,Smallbridge/Littleborough,check,false,53.647703,-2.083528,Added 2026-11-07: Littleborough coverage
 OL15 0JR,Smallbridge/Littleborough,confirmed,false,53.644004,-2.089753,Reviewed 2026-11-07: moved from Milnrow/Newhey
+OL15 0JS,Smallbridge/Littleborough,check,false,53.646523,-2.087096,Added 2026-11-07: Littleborough coverage
+OL15 0JW,Smallbridge/Littleborough,check,false,53.646615,-2.084509,Added 2026-11-07: Littleborough coverage
+OL15 0JX,Smallbridge/Littleborough,check,false,53.646389,-2.08593,Added 2026-11-07: Littleborough coverage
+OL15 0LA,Smallbridge/Littleborough,check,false,53.649574,-2.080476,Added 2026-11-07: Littleborough coverage
+OL15 0LB,Smallbridge/Littleborough,check,false,53.656313,-2.070366,Added 2026-11-07: Littleborough coverage
+OL15 0LD,Smallbridge/Littleborough,check,false,53.65135,-2.073368,Added 2026-11-07: Littleborough coverage
+OL15 0LE,Smallbridge/Littleborough,check,false,53.655487,-2.067883,Added 2026-11-07: Littleborough coverage
+OL15 0LF,Smallbridge/Littleborough,check,false,53.650625,-2.067149,Added 2026-11-07: Littleborough coverage
+OL15 0LG,Smallbridge/Littleborough,check,false,53.656368,-2.049516,Added 2026-11-07: Littleborough coverage
+OL15 0LH,Smallbridge/Littleborough,check,false,53.636505,-2.080632,Added 2026-11-07: Littleborough coverage
+OL15 0LJ,Smallbridge/Littleborough,check,false,53.636505,-2.081177,Added 2026-11-07: Littleborough coverage
+OL15 0LL,Smallbridge/Littleborough,check,false,53.64557,-2.073313,Added 2026-11-07: Littleborough coverage
+OL15 0LN,Smallbridge/Littleborough,check,false,53.651822,-2.079557,Added 2026-11-07: Littleborough coverage
+OL15 0LP,Smallbridge/Littleborough,check,false,53.657557,-2.079174,Added 2026-11-07: Littleborough coverage
+OL15 0LQ,Smallbridge/Littleborough,check,false,53.644755,-2.068471,Added 2026-11-07: Littleborough coverage
+OL15 0LR,Smallbridge/Littleborough,check,false,53.657708,-2.082065,Added 2026-11-07: Littleborough coverage
+OL15 0LW,Smallbridge/Littleborough,check,false,53.653456,-2.082208,Added 2026-11-07: Littleborough coverage
 OL15 0NA,Milnrow/Newhey,seeded,false,53.635037,-2.107276,
 OL15 0NB,Milnrow/Newhey,seeded,false,53.63181,-2.108342,
 OL15 0ND,Milnrow/Newhey,seeded,false,53.632087,-2.1099,
@@ -1616,29 +1660,68 @@ OL15 8AU,Smallbridge/Littleborough,confirmed,false,53.643656,-2.097829,Reviewed 
 OL15 8AW,Smallbridge/Littleborough,confirmed,false,53.642739,-2.098372,Reviewed 2026-11-07: moved from Milnrow/Newhey
 OL15 8AX,Smallbridge/Littleborough,confirmed,false,53.643405,-2.097693,Reviewed 2026-11-07: moved from Milnrow/Newhey
 OL15 8BA,Smallbridge/Littleborough,confirmed,false,53.644242,-2.096016,Reviewed 2026-11-07: moved from Milnrow/Newhey
+OL15 8BB,Smallbridge/Littleborough,check,false,53.644977,-2.098241,Added 2026-11-07: Littleborough coverage
+OL15 8BD,Smallbridge/Littleborough,check,false,53.64495,-2.098241,Added 2026-11-07: Littleborough coverage
+OL15 8BE,Smallbridge/Littleborough,check,false,53.644798,-2.098074,Added 2026-11-07: Littleborough coverage
 OL15 8BF,Smallbridge/Littleborough,confirmed,false,53.639717,-2.110918,Reviewed 2026-11-07: moved from Milnrow/Newhey
+OL15 8BG,Smallbridge/Littleborough,check,false,53.645166,-2.098362,Added 2026-11-07: Littleborough coverage
 OL15 8BH,Smallbridge/Littleborough,confirmed,false,53.644096,-2.098693,Reviewed 2026-11-07: moved from Milnrow/Newhey
 OL15 8BJ,Smallbridge/Littleborough,confirmed,false,53.64398,-2.097316,Reviewed 2026-11-07: moved from Milnrow/Newhey
 OL15 8BL,Smallbridge/Littleborough,confirmed,false,53.643692,-2.097633,Reviewed 2026-11-07: moved from Milnrow/Newhey
 OL15 8BN,Smallbridge/Littleborough,confirmed,false,53.643575,-2.098646,Reviewed 2026-11-07: moved from Milnrow/Newhey
 OL15 8BP,Smallbridge/Littleborough,confirmed,false,53.643628,-2.099266,Reviewed 2026-11-07: moved from Milnrow/Newhey
+OL15 8BQ,Smallbridge/Littleborough,check,false,53.644447,-2.098451,Added 2026-11-07: Littleborough coverage
 OL15 8BS,Smallbridge/Littleborough,confirmed,false,53.643412,-2.099251,Reviewed 2026-11-07: moved from Milnrow/Newhey
 OL15 8BU,Milnrow/Newhey,seeded,false,53.639839,-2.10502,
+OL15 8BW,Smallbridge/Littleborough,check,false,53.644257,-2.099419,Added 2026-11-07: Littleborough coverage
 OL15 8BY,Smallbridge/Littleborough,confirmed,false,53.639943,-2.109573,Reviewed 2026-11-07: moved from Milnrow/Newhey
+OL15 8BZ,Smallbridge/Littleborough,check,false,53.644515,-2.102838,Added 2026-11-07: Littleborough coverage
 OL15 8DA,Smallbridge/Littleborough,confirmed,false,53.643767,-2.094426,Reviewed 2026-11-07: moved from Milnrow/Newhey
 OL15 8DB,Smallbridge/Littleborough,seeded,false,53.640956,-2.112298,
 OL15 8DE,Smallbridge/Littleborough,confirmed,false,53.643497,-2.094879,Reviewed 2026-11-07: moved from Milnrow/Newhey
+OL15 8DG,Smallbridge/Littleborough,check,false,53.646178,-2.101935,Added 2026-11-07: Littleborough coverage
 OL15 8DH,Smallbridge/Littleborough,confirmed,false,53.642448,-2.102924,Reviewed 2026-11-07: moved from Milnrow/Newhey
 OL15 8DJ,Smallbridge/Littleborough,confirmed,false,53.643199,-2.106738,Reviewed 2026-11-07
 OL15 8DL,Smallbridge/Littleborough,confirmed,false,53.642501,-2.103862,Reviewed 2026-11-07: moved from Milnrow/Newhey
 OL15 8DN,Smallbridge/Littleborough,confirmed,false,53.642168,-2.103543,Reviewed 2026-11-07: moved from Milnrow/Newhey
 OL15 8DP,Smallbridge/Littleborough,confirmed,false,53.639143,-2.109919,Reviewed 2026-11-07: moved from Milnrow/Newhey
+OL15 8DR,Smallbridge/Littleborough,check,false,53.643182,-2.105558,Added 2026-11-07: Littleborough coverage
 OL15 8DS,Smallbridge/Littleborough,confirmed,false,53.642211,-2.105737,Reviewed 2026-11-07
+OL15 8DT,Smallbridge/Littleborough,check,false,53.643793,-2.10571,Added 2026-11-07: Littleborough coverage
+OL15 8DU,Smallbridge/Littleborough,check,false,53.645665,-2.102977,Added 2026-11-07: Littleborough coverage
 OL15 8DW,Smallbridge/Littleborough,confirmed,false,53.642068,-2.105615,Reviewed 2026-11-07: moved from Milnrow/Newhey
+OL15 8DX,Smallbridge/Littleborough,check,false,53.645288,-2.102598,Added 2026-11-07: Littleborough coverage
+OL15 8DY,Smallbridge/Littleborough,check,false,53.646007,-2.102736,Added 2026-11-07: Littleborough coverage
+OL15 8DZ,Smallbridge/Littleborough,check,false,53.646258,-2.10319,Added 2026-11-07: Littleborough coverage
+OL15 8EA,Smallbridge/Littleborough,check,false,53.647193,-2.103707,Added 2026-11-07: Littleborough coverage
+OL15 8EB,Smallbridge/Littleborough,check,false,53.646572,-2.104023,Added 2026-11-07: Littleborough coverage
+OL15 8ED,Smallbridge/Littleborough,check,false,53.647399,-2.103813,Added 2026-11-07: Littleborough coverage
+OL15 8EE,Smallbridge/Littleborough,check,false,53.647104,-2.102391,Added 2026-11-07: Littleborough coverage
+OL15 8EF,Smallbridge/Littleborough,check,false,53.647005,-2.102194,Added 2026-11-07: Littleborough coverage
+OL15 8EG,Smallbridge/Littleborough,check,false,53.648156,-2.10206,Added 2026-11-07: Littleborough coverage
+OL15 8EH,Smallbridge/Littleborough,check,false,53.648585,-2.1048,Added 2026-11-07: Littleborough coverage
+OL15 8EJ,Smallbridge/Littleborough,check,false,53.647838,-2.105872,Added 2026-11-07: Littleborough coverage
+OL15 8EL,Smallbridge/Littleborough,check,false,53.648152,-2.106327,Added 2026-11-07: Littleborough coverage
+OL15 8EN,Smallbridge/Littleborough,check,false,53.648061,-2.107355,Added 2026-11-07: Littleborough coverage
+OL15 8EP,Smallbridge/Littleborough,check,false,53.649598,-2.10813,Added 2026-11-07: Littleborough coverage
+OL15 8EQ,Smallbridge/Littleborough,check,false,53.648478,-2.103831,Added 2026-11-07: Littleborough coverage
+OL15 8ER,Smallbridge/Littleborough,check,false,53.649633,-2.108448,Added 2026-11-07: Littleborough coverage
+OL15 8ES,Smallbridge/Littleborough,check,false,53.648478,-2.11377,Added 2026-11-07: Littleborough coverage
+OL15 8ET,Smallbridge/Littleborough,check,false,53.648372,-2.11141,Added 2026-11-07: Littleborough coverage
+OL15 8EU,Smallbridge/Littleborough,check,false,53.649056,-2.110277,Added 2026-11-07: Littleborough coverage
+OL15 8EW,Smallbridge/Littleborough,check,false,53.648573,-2.108082,Added 2026-11-07: Littleborough coverage
+OL15 8EX,Smallbridge/Littleborough,check,false,53.648659,-2.111955,Added 2026-11-07: Littleborough coverage
+OL15 8EY,Smallbridge/Littleborough,check,false,53.64847,-2.112969,Added 2026-11-07: Littleborough coverage
+OL15 8EZ,Smallbridge/Littleborough,check,false,53.648838,-2.113,Added 2026-11-07: Littleborough coverage
 OL15 8FF,Smallbridge/Littleborough,confirmed,false,53.639404,-2.108603,Reviewed 2026-11-07: moved from Milnrow/Newhey
+OL15 8FH,Smallbridge/Littleborough,check,false,53.644027,-2.115785,Added 2026-11-07: Littleborough coverage
 OL15 8FJ,Milnrow/Newhey,seeded,false,53.633297,-2.11376,
+OL15 8HA,Smallbridge/Littleborough,check,false,53.64801,-2.113981,Added 2026-11-07: Littleborough coverage
+OL15 8HB,Smallbridge/Littleborough,check,false,53.648244,-2.113573,Added 2026-11-07: Littleborough coverage
 OL15 8HD,Smallbridge/Littleborough,confirmed,false,53.642148,-2.106538,Reviewed 2026-11-07
+OL15 8HF,Smallbridge/Littleborough,check,false,53.642995,-2.103349,Added 2026-11-07: Littleborough coverage
 OL15 8HH,Smallbridge/Littleborough,confirmed,false,53.64191,-2.100624,Reviewed 2026-11-07: moved from Milnrow/Newhey
+OL15 8HN,Smallbridge/Littleborough,check,false,53.644718,-2.11671,Added 2026-11-07: Littleborough coverage
 OL15 8HP,Smallbridge/Littleborough,confirmed,false,53.637799,-2.114634,Reviewed 2026-11-07: moved from Milnrow/Newhey
 OL15 8HR,Milnrow/Newhey,seeded,false,53.633716,-2.117284,
 OL15 8HU,Smallbridge/Littleborough,confirmed,false,53.642287,-2.101441,Reviewed 2026-11-07: moved from Milnrow/Newhey
@@ -1672,9 +1755,15 @@ OL15 8LF,Smallbridge/Littleborough,confirmed,false,53.641828,-2.111877,Reviewed 
 OL15 8LG,Smallbridge/Littleborough,confirmed,false,53.642277,-2.112846,Reviewed 2026-11-07
 OL15 8LH,Smallbridge/Littleborough,confirmed,false,53.641576,-2.112375,Reviewed 2026-11-07
 OL15 8LJ,Smallbridge/Littleborough,confirmed,false,53.642555,-2.113361,Reviewed 2026-11-07
+OL15 8LL,Smallbridge/Littleborough,check,false,53.643085,-2.113801,Added 2026-11-07: Littleborough coverage
+OL15 8LN,Smallbridge/Littleborough,check,false,53.643722,-2.114695,Added 2026-11-07: Littleborough coverage
+OL15 8LP,Smallbridge/Littleborough,check,false,53.644406,-2.114153,Added 2026-11-07: Littleborough coverage
 OL15 8LQ,Smallbridge/Littleborough,confirmed,false,53.641809,-2.113616,Reviewed 2026-11-07
+OL15 8LR,Smallbridge/Littleborough,check,false,53.644534,-2.11205,Added 2026-11-07: Littleborough coverage
+OL15 8LS,Smallbridge/Littleborough,check,false,53.64376,-2.112305,Added 2026-11-07: Littleborough coverage
 OL15 8LT,Smallbridge/Littleborough,confirmed,false,53.64091,-2.113614,Reviewed 2026-11-07
 OL15 8LU,Smallbridge/Littleborough,seeded,false,53.641217,-2.11183,
+OL15 8LW,Smallbridge/Littleborough,check,false,53.643955,-2.11512,Added 2026-11-07: Littleborough coverage
 OL15 8LX,Smallbridge/Littleborough,seeded,false,53.640731,-2.113039,
 OL15 8LY,Smallbridge/Littleborough,seeded,false,53.640722,-2.113069,
 OL15 8LZ,Smallbridge/Littleborough,seeded,false,53.640604,-2.113371,
@@ -1692,7 +1781,9 @@ OL15 8NP,Smallbridge/Littleborough,seeded,false,53.642091,-2.109624,
 OL15 8NQ,Smallbridge/Littleborough,confirmed,false,53.642747,-2.110004,Reviewed 2026-11-07
 OL15 8NR,Smallbridge/Littleborough,confirmed,false,53.642441,-2.110593,Reviewed 2026-11-07
 OL15 8NS,Smallbridge/Littleborough,confirmed,false,53.643284,-2.112304,Reviewed 2026-11-07
+OL15 8NT,Smallbridge/Littleborough,check,false,53.64536,-2.112627,Added 2026-11-07: Littleborough coverage
 OL15 8NU,Smallbridge/Littleborough,confirmed,false,53.643746,-2.108736,Reviewed 2026-11-07
+OL15 8NX,Smallbridge/Littleborough,check,false,53.643427,-2.113106,Added 2026-11-07: Littleborough coverage
 OL15 8NY,Smallbridge/Littleborough,confirmed,false,53.641893,-2.109472,Reviewed 2026-11-07
 OL15 8NZ,Smallbridge/Littleborough,seeded,false,53.641496,-2.111316,
 OL15 8PA,Smallbridge/Littleborough,confirmed,false,53.641714,-2.108564,Reviewed 2026-11-07
@@ -1724,6 +1815,7 @@ OL15 8QH,Smallbridge/Littleborough,confirmed,false,53.636988,-2.11622,Reviewed 2
 OL15 8QJ,Milnrow/Newhey,seeded,false,53.635329,-2.112964,
 OL15 8QL,Milnrow/Newhey,seeded,false,53.634457,-2.113037,
 OL15 8QN,Milnrow/Newhey,seeded,false,53.633089,-2.114394,
+OL15 8QP,Smallbridge/Littleborough,check,false,53.659914,-2.08847,Added 2026-11-07: Littleborough coverage
 OL15 8QQ,Milnrow/Newhey,seeded,false,53.633395,-2.113881,
 OL15 8QR,Milnrow/Newhey,seeded,false,53.630674,-2.111681,
 OL15 8QS,Milnrow/Newhey,seeded,false,53.634264,-2.107789,
@@ -1738,31 +1830,60 @@ OL15 8RB,Milnrow/Newhey,seeded,false,53.635222,-2.112026,
 OL15 8RD,Milnrow/Newhey,seeded,false,53.63569,-2.110923,
 OL15 8RE,Smallbridge/Littleborough,confirmed,false,53.643502,-2.110096,Reviewed 2026-11-07
 OL15 8RF,Milnrow/Newhey,seeded,false,53.636386,-2.116203,
+OL15 8RG,Smallbridge/Littleborough,check,false,53.645431,-2.113097,Added 2026-11-07: Littleborough coverage
+OL15 8RH,Smallbridge/Littleborough,check,false,53.645709,-2.114595,Added 2026-11-07: Littleborough coverage
+OL15 8RJ,Smallbridge/Littleborough,check,false,53.645141,-2.115456,Added 2026-11-07: Littleborough coverage
+OL15 8RL,Smallbridge/Littleborough,check,false,53.644597,-2.111461,Added 2026-11-07: Littleborough coverage
+OL15 8RN,Smallbridge/Littleborough,check,false,53.644598,-2.110145,Added 2026-11-07: Littleborough coverage
+OL15 8RP,Smallbridge/Littleborough,check,false,53.645236,-2.110358,Added 2026-11-07: Littleborough coverage
 OL15 8RQ,Smallbridge/Littleborough,confirmed,false,53.638813,-2.116164,Reviewed 2026-11-07
+OL15 8RR,Smallbridge/Littleborough,check,false,53.64619,-2.109181,Added 2026-11-07: Littleborough coverage
 OL15 8RS,Smallbridge/Littleborough,seeded,false,53.639803,-2.115244,
 OL15 8RT,Smallbridge/Littleborough,confirmed,false,53.641877,-2.107218,Reviewed 2026-11-07
+OL15 8RU,Smallbridge/Littleborough,check,false,53.645526,-2.108332,Added 2026-11-07: Littleborough coverage
+OL15 8RW,Smallbridge/Littleborough,check,false,53.644513,-2.114879,Added 2026-11-07: Littleborough coverage
+OL15 8RY,Smallbridge/Littleborough,check,false,53.645104,-2.107907,Added 2026-11-07: Littleborough coverage
+OL15 8RZ,Smallbridge/Littleborough,check,false,53.64583,-2.109951,Added 2026-11-07: Littleborough coverage
 OL15 8SA,Milnrow/Newhey,seeded,false,53.639164,-2.10582,
 OL15 8SB,Smallbridge/Littleborough,confirmed,false,53.640575,-2.105899,Reviewed 2026-11-07: moved from Milnrow/Newhey
 OL15 8SD,Smallbridge/Littleborough,confirmed,false,53.640655,-2.1072,Reviewed 2026-11-07: moved from Milnrow/Newhey
 OL15 8SE,Smallbridge/Littleborough,confirmed,false,53.640161,-2.106488,Reviewed 2026-11-07: moved from Milnrow/Newhey
 OL15 8SG,Smallbridge/Littleborough,confirmed,false,53.641801,-2.101697,Reviewed 2026-11-07: moved from Milnrow/Newhey
 OL15 8YF,Milnrow/Newhey,seeded,false,53.634282,-2.116938,
+OL15 8YJ,Smallbridge/Littleborough,check,false,53.643617,-2.101807,Added 2026-11-07: Littleborough coverage
 OL15 8YL,Smallbridge/Littleborough,confirmed,false,53.643591,-2.100491,Reviewed 2026-11-07: moved from Milnrow/Newhey
 OL15 9AA,Smallbridge/Littleborough,confirmed,false,53.643937,-2.095622,Reviewed 2026-11-07: moved from Milnrow/Newhey
 OL15 9AB,Smallbridge/Littleborough,confirmed,false,53.644152,-2.096499,Reviewed 2026-11-07: moved from Milnrow/Newhey
 OL15 9AD,Smallbridge/Littleborough,confirmed,false,53.644492,-2.097453,Reviewed 2026-11-07: moved from Milnrow/Newhey
 OL15 9AE,Smallbridge/Littleborough,confirmed,false,53.64418,-2.095289,Reviewed 2026-11-07: moved from Milnrow/Newhey
 OL15 9AF,Smallbridge/Littleborough,confirmed,false,53.64401,-2.093428,Reviewed 2026-11-07: moved from Milnrow/Newhey
+OL15 9AG,Smallbridge/Littleborough,check,false,53.650659,-2.096529,Added 2026-11-07: Littleborough coverage
 OL15 9AH,Smallbridge/Littleborough,confirmed,false,53.645099,-2.092553,Reviewed 2026-11-07: moved from Milnrow/Newhey
 OL15 9AJ,Smallbridge/Littleborough,confirmed,false,53.64428,-2.093081,Reviewed 2026-11-07: moved from Milnrow/Newhey
+OL15 9AL,Smallbridge/Littleborough,check,false,53.658835,-2.089315,Added 2026-11-07: Littleborough coverage
+OL15 9AN,Smallbridge/Littleborough,check,false,53.658718,-2.089814,Added 2026-11-07: Littleborough coverage
+OL15 9AP,Smallbridge/Littleborough,check,false,53.658395,-2.088845,Added 2026-11-07: Littleborough coverage
+OL15 9AQ,Smallbridge/Littleborough,check,false,53.667576,-2.083265,Added 2026-11-07: Littleborough coverage
+OL15 9AR,Smallbridge/Littleborough,check,false,53.663046,-2.082968,Added 2026-11-07: Littleborough coverage
 OL15 9AS,Smallbridge/Littleborough,confirmed,false,53.644676,-2.092386,Reviewed 2026-11-07: moved from Milnrow/Newhey
+OL15 9AU,Smallbridge/Littleborough,check,false,53.646113,-2.093917,Added 2026-11-07: Littleborough coverage
+OL15 9AW,Smallbridge/Littleborough,check,false,53.663109,-2.082877,Added 2026-11-07: Littleborough coverage
 OL15 9AX,Smallbridge/Littleborough,confirmed,false,53.644215,-2.096091,Reviewed 2026-11-07: moved from Milnrow/Newhey
+OL15 9AZ,Smallbridge/Littleborough,check,false,53.648993,-2.089733,Added 2026-11-07: Littleborough coverage
 OL15 9BA,Smallbridge/Littleborough,confirmed,false,53.644556,-2.097045,Reviewed 2026-11-07: moved from Milnrow/Newhey
+OL15 9BB,Smallbridge/Littleborough,check,false,53.645607,-2.097562,Added 2026-11-07: Littleborough coverage
+OL15 9BD,Smallbridge/Littleborough,check,false,53.64549,-2.098,Added 2026-11-07: Littleborough coverage
+OL15 9BE,Smallbridge/Littleborough,check,false,53.645662,-2.096457,Added 2026-11-07: Littleborough coverage
+OL15 9BG,Smallbridge/Littleborough,check,false,53.645563,-2.09561,Added 2026-11-07: Littleborough coverage
 OL15 9BH,Smallbridge/Littleborough,confirmed,false,53.645087,-2.095821,Reviewed 2026-11-07: moved from Milnrow/Newhey
 OL15 9BJ,Smallbridge/Littleborough,confirmed,false,53.645006,-2.095624,Reviewed 2026-11-07: moved from Milnrow/Newhey
+OL15 9BL,Smallbridge/Littleborough,check,false,53.645113,-2.096623,Added 2026-11-07: Littleborough coverage
+OL15 9BN,Smallbridge/Littleborough,check,false,53.646228,-2.096247,Added 2026-11-07: Littleborough coverage
 OL15 9BQ,Smallbridge/Littleborough,confirmed,false,53.645087,-2.095851,Reviewed 2026-11-07: moved from Milnrow/Newhey
+OL15 9BS,Smallbridge/Littleborough,check,false,53.64496,-2.097061,Added 2026-11-07: Littleborough coverage
 OL15 9BT,Smallbridge/Littleborough,confirmed,false,53.644781,-2.096592,Reviewed 2026-11-07: moved from Milnrow/Newhey
 OL15 9BU,Smallbridge/Littleborough,confirmed,false,53.644772,-2.096319,Reviewed 2026-11-07: moved from Milnrow/Newhey
+OL15 9BW,Smallbridge/Littleborough,check,false,53.645104,-2.096849,Added 2026-11-07: Littleborough coverage
 OL15 9BX,Smallbridge/Littleborough,confirmed,false,53.644727,-2.096062,Reviewed 2026-11-07: moved from Milnrow/Newhey
 OL15 9BY,Smallbridge/Littleborough,confirmed,false,53.644736,-2.095805,Reviewed 2026-11-07: moved from Milnrow/Newhey
 OL15 9BZ,Smallbridge/Littleborough,confirmed,false,53.645348,-2.094838,Reviewed 2026-11-07: moved from Milnrow/Newhey
@@ -1776,9 +1897,155 @@ OL15 9DH,Smallbridge/Littleborough,confirmed,false,53.645125,-2.093325,Reviewed 
 OL15 9DJ,Smallbridge/Littleborough,confirmed,false,53.645646,-2.093008,Reviewed 2026-11-07: moved from Milnrow/Newhey
 OL15 9DL,Smallbridge/Littleborough,confirmed,false,53.645538,-2.094097,Reviewed 2026-11-07: moved from Milnrow/Newhey
 OL15 9DN,Smallbridge/Littleborough,confirmed,false,53.645322,-2.093794,Reviewed 2026-11-07: moved from Milnrow/Newhey
+OL15 9DP,Smallbridge/Littleborough,check,false,53.645924,-2.094749,Added 2026-11-07: Littleborough coverage
 OL15 9DQ,Smallbridge/Littleborough,confirmed,false,53.645062,-2.093128,Reviewed 2026-11-07: moved from Milnrow/Newhey
+OL15 9DR,Smallbridge/Littleborough,check,false,53.645609,-2.094597,Added 2026-11-07: Littleborough coverage
+OL15 9DU,Smallbridge/Littleborough,check,false,53.646112,-2.094915,Added 2026-11-07: Littleborough coverage
 OL15 9DW,Smallbridge/Littleborough,confirmed,false,53.645709,-2.093538,Reviewed 2026-11-07: moved from Milnrow/Newhey
+OL15 9DX,Smallbridge/Littleborough,check,false,53.646553,-2.094523,Added 2026-11-07: Littleborough coverage
+OL15 9DY,Smallbridge/Littleborough,check,false,53.646428,-2.093827,Added 2026-11-07: Littleborough coverage
+OL15 9DZ,Smallbridge/Littleborough,check,false,53.647084,-2.093193,Added 2026-11-07: Littleborough coverage
+OL15 9EA,Smallbridge/Littleborough,check,false,53.64615,-2.092692,Added 2026-11-07: Littleborough coverage
+OL15 9EB,Smallbridge/Littleborough,check,false,53.647175,-2.091832,Added 2026-11-07: Littleborough coverage
+OL15 9ED,Smallbridge/Littleborough,check,false,53.647947,-2.09321,Added 2026-11-07: Littleborough coverage
+OL15 9EE,Smallbridge/Littleborough,check,false,53.647902,-2.093573,Added 2026-11-07: Littleborough coverage
+OL15 9EF,Smallbridge/Littleborough,check,false,53.647993,-2.092287,Added 2026-11-07: Littleborough coverage
+OL15 9EG,Smallbridge/Littleborough,check,false,53.648902,-2.090701,Added 2026-11-07: Littleborough coverage
 OL15 9EH,Smallbridge/Littleborough,confirmed,false,53.645097,-2.095004,Reviewed 2026-11-07: moved from Milnrow/Newhey
+OL15 9EJ,Smallbridge/Littleborough,check,false,53.651626,-2.089466,Added 2026-11-07: Littleborough coverage
+OL15 9EL,Smallbridge/Littleborough,check,false,53.650215,-2.089418,Added 2026-11-07: Littleborough coverage
+OL15 9EN,Smallbridge/Littleborough,check,false,53.650206,-2.089161,Added 2026-11-07: Littleborough coverage
+OL15 9EP,Smallbridge/Littleborough,check,false,53.651627,-2.088574,Added 2026-11-07: Littleborough coverage
+OL15 9ER,Smallbridge/Littleborough,check,false,53.652463,-2.088,Added 2026-11-07: Littleborough coverage
+OL15 9ES,Smallbridge/Littleborough,check,false,53.652796,-2.087411,Added 2026-11-07: Littleborough coverage
+OL15 9ET,Smallbridge/Littleborough,check,false,53.652526,-2.088394,Added 2026-11-07: Littleborough coverage
+OL15 9EU,Smallbridge/Littleborough,check,false,53.65285,-2.088137,Added 2026-11-07: Littleborough coverage
+OL15 9EW,Smallbridge/Littleborough,check,false,53.660862,-2.082404,Added 2026-11-07: Littleborough coverage
+OL15 9EX,Smallbridge/Littleborough,check,false,53.653407,-2.0877,Added 2026-11-07: Littleborough coverage
+OL15 9EY,Smallbridge/Littleborough,check,false,53.652131,-2.088242,Added 2026-11-07: Littleborough coverage
+OL15 9EZ,Smallbridge/Littleborough,check,false,53.650781,-2.089812,Added 2026-11-07: Littleborough coverage
+OL15 9FE,Smallbridge/Littleborough,check,false,53.646266,-2.094144,Added 2026-11-07: Littleborough coverage
+OL15 9FG,Smallbridge/Littleborough,check,false,53.649803,-2.087163,Added 2026-11-07: Littleborough coverage
+OL15 9HD,Smallbridge/Littleborough,check,false,53.645903,-2.098122,Added 2026-11-07: Littleborough coverage
+OL15 9HE,Smallbridge/Littleborough,check,false,53.645938,-2.098984,Added 2026-11-07: Littleborough coverage
+OL15 9HG,Smallbridge/Littleborough,check,false,53.646809,-2.100333,Added 2026-11-07: Littleborough coverage
+OL15 9HJ,Smallbridge/Littleborough,check,false,53.647079,-2.100454,Added 2026-11-07: Littleborough coverage
+OL15 9HL,Smallbridge/Littleborough,check,false,53.648436,-2.100473,Added 2026-11-07: Littleborough coverage
+OL15 9HN,Smallbridge/Littleborough,check,false,53.650828,-2.099374,Added 2026-11-07: Littleborough coverage
+OL15 9HQ,Smallbridge/Littleborough,check,false,53.646269,-2.100634,Added 2026-11-07: Littleborough coverage
+OL15 9HR,Smallbridge/Littleborough,check,false,53.649261,-2.102018,Added 2026-11-07: Littleborough coverage
+OL15 9HS,Smallbridge/Littleborough,check,false,53.648972,-2.104256,Added 2026-11-07: Littleborough coverage
+OL15 9HT,Smallbridge/Littleborough,check,false,53.648749,-2.102047,Added 2026-11-07: Littleborough coverage
+OL15 9HU,Smallbridge/Littleborough,check,false,53.649375,-2.105664,Added 2026-11-07: Littleborough coverage
+OL15 9HW,Smallbridge/Littleborough,check,false,53.649722,-2.098827,Added 2026-11-07: Littleborough coverage
+OL15 9HX,Smallbridge/Littleborough,check,false,53.649259,-2.104453,Added 2026-11-07: Littleborough coverage
+OL15 9HY,Smallbridge/Littleborough,check,false,53.650282,-2.106029,Added 2026-11-07: Littleborough coverage
+OL15 9JA,Smallbridge/Littleborough,check,false,53.649483,-2.106027,Added 2026-11-07: Littleborough coverage
+OL15 9JB,Smallbridge/Littleborough,check,false,53.649958,-2.107209,Added 2026-11-07: Littleborough coverage
+OL15 9JD,Smallbridge/Littleborough,check,false,53.650759,-2.106076,Added 2026-11-07: Littleborough coverage
+OL15 9JE,Smallbridge/Littleborough,check,false,53.649855,-2.101883,Added 2026-11-07: Littleborough coverage
+OL15 9JF,Smallbridge/Littleborough,check,false,53.650349,-2.101733,Added 2026-11-07: Littleborough coverage
+OL15 9JG,Smallbridge/Littleborough,check,false,53.649829,-2.10031,Added 2026-11-07: Littleborough coverage
+OL15 9JJ,Smallbridge/Littleborough,check,false,53.649973,-2.09978,Added 2026-11-07: Littleborough coverage
+OL15 9JL,Smallbridge/Littleborough,check,false,53.650215,-2.100734,Added 2026-11-07: Littleborough coverage
+OL15 9JN,Smallbridge/Littleborough,check,false,53.651222,-2.100207,Added 2026-11-07: Littleborough coverage
+OL15 9JP,Smallbridge/Littleborough,check,false,53.650637,-2.101265,Added 2026-11-07: Littleborough coverage
+OL15 9JR,Smallbridge/Littleborough,check,false,53.651418,-2.102114,Added 2026-11-07: Littleborough coverage
+OL15 9JS,Smallbridge/Littleborough,check,false,53.651248,-2.101221,Added 2026-11-07: Littleborough coverage
+OL15 9JU,Smallbridge/Littleborough,check,false,53.652192,-2.100936,Added 2026-11-07: Littleborough coverage
+OL15 9JW,Smallbridge/Littleborough,check,false,53.652777,-2.100574,Added 2026-11-07: Littleborough coverage
+OL15 9JX,Smallbridge/Littleborough,check,false,53.651009,-2.097241,Added 2026-11-07: Littleborough coverage
+OL15 9JY,Smallbridge/Littleborough,check,false,53.650464,-2.09252,Added 2026-11-07: Littleborough coverage
+OL15 9JZ,Smallbridge/Littleborough,check,false,53.652336,-2.101405,Added 2026-11-07: Littleborough coverage
+OL15 9LB,Smallbridge/Littleborough,check,false,53.651428,-2.101146,Added 2026-11-07: Littleborough coverage
+OL15 9LD,Smallbridge/Littleborough,check,false,53.648833,-2.098159,Added 2026-11-07: Littleborough coverage
+OL15 9LE,Smallbridge/Littleborough,check,false,53.650825,-2.091734,Added 2026-11-07: Littleborough coverage
+OL15 9LF,Smallbridge/Littleborough,check,false,53.64821,-2.101425,Added 2026-11-07: Littleborough coverage
+OL15 9LG,Smallbridge/Littleborough,check,false,53.648289,-2.103755,Added 2026-11-07: Littleborough coverage
+OL15 9LH,Smallbridge/Littleborough,check,false,53.649419,-2.107056,Added 2026-11-07: Littleborough coverage
+OL15 9LJ,Smallbridge/Littleborough,check,false,53.649217,-2.111412,Added 2026-11-07: Littleborough coverage
+OL15 9LL,Smallbridge/Littleborough,check,false,53.649845,-2.112624,Added 2026-11-07: Littleborough coverage
+OL15 9LN,Smallbridge/Littleborough,check,false,53.651618,-2.109664,Added 2026-11-07: Littleborough coverage
+OL15 9LP,Smallbridge/Littleborough,check,false,53.648918,-2.114377,Added 2026-11-07: Littleborough coverage
+OL15 9LQ,Smallbridge/Littleborough,check,false,53.648817,-2.10595,Added 2026-11-07: Littleborough coverage
+OL15 9LR,Smallbridge/Littleborough,check,false,53.649885,-2.108116,Added 2026-11-07: Littleborough coverage
+OL15 9LS,Smallbridge/Littleborough,check,false,53.649359,-2.113122,Added 2026-11-07: Littleborough coverage
+OL15 9LT,Smallbridge/Littleborough,check,false,53.649864,-2.111323,Added 2026-11-07: Littleborough coverage
+OL15 9LU,Smallbridge/Littleborough,check,false,53.650586,-2.108632,Added 2026-11-07: Littleborough coverage
+OL15 9LW,Smallbridge/Littleborough,check,false,53.651117,-2.117424,Added 2026-11-07: Littleborough coverage
+OL15 9LX,Smallbridge/Littleborough,check,false,53.650225,-2.11019,Added 2026-11-07: Littleborough coverage
+OL15 9LY,Smallbridge/Littleborough,check,false,53.667818,-2.083432,Added 2026-11-07: Littleborough coverage
+OL15 9LZ,Smallbridge/Littleborough,check,false,53.669517,-2.083617,Added 2026-11-07: Littleborough coverage
+OL15 9NA,Smallbridge/Littleborough,check,false,53.664797,-2.085317,Added 2026-11-07: Littleborough coverage
+OL15 9NB,Smallbridge/Littleborough,check,false,53.660993,-2.088291,Added 2026-11-07: Littleborough coverage
+OL15 9ND,Smallbridge/Littleborough,check,false,53.660849,-2.08882,Added 2026-11-07: Littleborough coverage
+OL15 9NE,Smallbridge/Littleborough,check,false,53.661784,-2.087415,Added 2026-11-07: Littleborough coverage
+OL15 9NF,Smallbridge/Littleborough,check,false,53.662666,-2.086206,Added 2026-11-07: Littleborough coverage
+OL15 9NG,Smallbridge/Littleborough,check,false,53.663861,-2.086405,Added 2026-11-07: Littleborough coverage
+OL15 9NH,Smallbridge/Littleborough,check,false,53.664488,-2.0896,Added 2026-11-07: Littleborough coverage
+OL15 9NJ,Smallbridge/Littleborough,check,false,53.668707,-2.085038,Added 2026-11-07: Littleborough coverage
+OL15 9NL,Smallbridge/Littleborough,check,false,53.661963,-2.088686,Added 2026-11-07: Littleborough coverage
+OL15 9NN,Smallbridge/Littleborough,check,false,53.661226,-2.088609,Added 2026-11-07: Littleborough coverage
+OL15 9NP,Smallbridge/Littleborough,check,false,53.655707,-2.08896,Added 2026-11-07: Littleborough coverage
+OL15 9NQ,Smallbridge/Littleborough,check,false,53.663798,-2.087555,Added 2026-11-07: Littleborough coverage
+OL15 9NR,Smallbridge/Littleborough,check,false,53.658006,-2.092264,Added 2026-11-07: Littleborough coverage
+OL15 9NS,Smallbridge/Littleborough,check,false,53.659143,-2.098213,Added 2026-11-07: Littleborough coverage
+OL15 9NT,Smallbridge/Littleborough,check,false,53.655395,-2.097675,Added 2026-11-07: Littleborough coverage
+OL15 9NU,Smallbridge/Littleborough,check,false,53.654774,-2.098899,Added 2026-11-07: Littleborough coverage
+OL15 9NW,Smallbridge/Littleborough,check,false,53.659868,-2.089771,Added 2026-11-07: Littleborough coverage
+OL15 9NX,Smallbridge/Littleborough,check,false,53.653973,-2.099578,Added 2026-11-07: Littleborough coverage
+OL15 9NY,Smallbridge/Littleborough,check,false,53.653072,-2.102496,Added 2026-11-07: Littleborough coverage
+OL15 9NZ,Smallbridge/Littleborough,check,false,53.653862,-2.103451,Added 2026-11-07: Littleborough coverage
+OL15 9PA,Smallbridge/Littleborough,check,false,53.655245,-2.104846,Added 2026-11-07: Littleborough coverage
+OL15 9PB,Smallbridge/Littleborough,check,false,53.66075,-2.088457,Added 2026-11-07: Littleborough coverage
+OL15 9PE,Smallbridge/Littleborough,check,false,53.674199,-2.084716,Added 2026-11-07: Littleborough coverage
+OL15 9PF,Smallbridge/Littleborough,check,false,53.655531,-2.084708,Added 2026-11-07: Littleborough coverage
+OL15 9PG,Smallbridge/Littleborough,check,false,53.666802,-2.083853,Added 2026-11-07: Littleborough coverage
+OL15 9PH,Smallbridge/Littleborough,check,false,53.656087,-2.086177,Added 2026-11-07: Littleborough coverage
+OL15 9PL,Smallbridge/Littleborough,check,false,53.655566,-2.08548,Added 2026-11-07: Littleborough coverage
+OL15 9PN,Smallbridge/Littleborough,check,false,53.656789,-2.085256,Added 2026-11-07: Littleborough coverage
+OL15 9PP,Smallbridge/Littleborough,check,false,53.657418,-2.085575,Added 2026-11-07: Littleborough coverage
+OL15 9PQ,Smallbridge/Littleborough,check,false,53.654937,-2.084859,Added 2026-11-07: Littleborough coverage
+OL15 9PR,Smallbridge/Littleborough,check,false,53.657949,-2.084638,Added 2026-11-07: Littleborough coverage
+OL15 9PS,Smallbridge/Littleborough,check,false,53.658595,-2.08588,Added 2026-11-07: Littleborough coverage
+OL15 9PT,Smallbridge/Littleborough,check,false,53.658585,-2.086546,Added 2026-11-07: Littleborough coverage
+OL15 9PU,Smallbridge/Littleborough,check,false,53.658405,-2.08768,Added 2026-11-07: Littleborough coverage
+OL15 9PW,Smallbridge/Littleborough,check,false,53.658532,-2.085093,Added 2026-11-07: Littleborough coverage
+OL15 9PX,Smallbridge/Littleborough,check,false,53.659017,-2.086819,Added 2026-11-07: Littleborough coverage
+OL15 9PY,Smallbridge/Littleborough,check,false,53.659259,-2.087303,Added 2026-11-07: Littleborough coverage
+OL15 9PZ,Smallbridge/Littleborough,check,false,53.659321,-2.088302,Added 2026-11-07: Littleborough coverage
+OL15 9QA,Smallbridge/Littleborough,check,false,53.659735,-2.088182,Added 2026-11-07: Littleborough coverage
+OL15 9QB,Smallbridge/Littleborough,check,false,53.659789,-2.086866,Added 2026-11-07: Littleborough coverage
+OL15 9QD,Smallbridge/Littleborough,check,false,53.660176,-2.086897,Added 2026-11-07: Littleborough coverage
+OL15 9QE,Smallbridge/Littleborough,check,false,53.660363,-2.08888,Added 2026-11-07: Littleborough coverage
+OL15 9QF,Smallbridge/Littleborough,check,false,53.660508,-2.087715,Added 2026-11-07: Littleborough coverage
+OL15 9QG,Smallbridge/Littleborough,check,false,53.66086,-2.085219,Added 2026-11-07: Littleborough coverage
+OL15 9QH,Smallbridge/Littleborough,check,false,53.661481,-2.08466,Added 2026-11-07: Littleborough coverage
+OL15 9QJ,Smallbridge/Littleborough,check,false,53.658866,-2.083595,Added 2026-11-07: Littleborough coverage
+OL15 9QL,Smallbridge/Littleborough,check,false,53.660909,-2.079998,Added 2026-11-07: Littleborough coverage
+OL15 9QN,Smallbridge/Littleborough,check,false,53.659991,-2.081509,Added 2026-11-07: Littleborough coverage
+OL15 9QP,Smallbridge/Littleborough,check,false,53.657708,-2.082065,Added 2026-11-07: Littleborough coverage
+OL15 9QQ,Smallbridge/Littleborough,check,false,53.661525,-2.085296,Added 2026-11-07: Littleborough coverage
+OL15 9QR,Smallbridge/Littleborough,check,false,53.662318,-2.083103,Added 2026-11-07: Littleborough coverage
+OL15 9QS,Smallbridge/Littleborough,check,false,53.662497,-2.083527,Added 2026-11-07: Littleborough coverage
+OL15 9QT,Smallbridge/Littleborough,check,false,53.66292,-2.083255,Added 2026-11-07: Littleborough coverage
+OL15 9QU,Smallbridge/Littleborough,check,false,53.662803,-2.082816,Added 2026-11-07: Littleborough coverage
+OL15 9QW,Smallbridge/Littleborough,check,false,53.662129,-2.083314,Added 2026-11-07: Littleborough coverage
+OL15 9QX,Smallbridge/Littleborough,check,false,53.664547,-2.082638,Added 2026-11-07: Littleborough coverage
+OL15 9QY,Smallbridge/Littleborough,check,false,53.663288,-2.08318,Added 2026-11-07: Littleborough coverage
+OL15 9QZ,Smallbridge/Littleborough,check,false,53.663424,-2.082757,Added 2026-11-07: Littleborough coverage
+OL15 9RA,Smallbridge/Littleborough,check,false,53.663513,-2.082803,Added 2026-11-07: Littleborough coverage
+OL15 9RB,Smallbridge/Littleborough,check,false,53.663945,-2.082788,Added 2026-11-07: Littleborough coverage
+OL15 9RE,Smallbridge/Littleborough,check,false,53.66497,-2.082397,Added 2026-11-07: Littleborough coverage
+OL15 9RF,Smallbridge/Littleborough,check,false,53.665221,-2.082761,Added 2026-11-07: Littleborough coverage
+OL15 9RG,Smallbridge/Littleborough,check,false,53.665293,-2.082988,Added 2026-11-07: Littleborough coverage
+OL15 9RH,Smallbridge/Littleborough,check,false,53.66112,-2.086672,Added 2026-11-07: Littleborough coverage
+OL15 9RJ,Smallbridge/Littleborough,check,false,53.664394,-2.082713,Added 2026-11-07: Littleborough coverage
+OL15 9RL,Smallbridge/Littleborough,check,false,53.662174,-2.08333,Added 2026-11-07: Littleborough coverage
+OL15 9RN,Smallbridge/Littleborough,check,false,53.663028,-2.082741,Added 2026-11-07: Littleborough coverage
+OL15 9RP,Smallbridge/Littleborough,check,false,53.647394,-2.099275,Added 2026-11-07: Littleborough coverage
+OL15 9RQ,Smallbridge/Littleborough,check,false,53.665482,-2.08264,Added 2026-11-07: Littleborough coverage
+OL15 9RT,Smallbridge/Littleborough,check,false,53.664799,-2.082442,Added 2026-11-07: Littleborough coverage
 OL16 1AE,Deeplish,seeded,false,53.616599,-2.158898,
 OL16 1AF,Deeplish,seeded,false,53.614394,-2.161339,
 OL16 1AG,Deeplish,seeded,false,53.615931,-2.161345,
