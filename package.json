@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "test": "node --test test/"
+    "test": "node --test test/",
+    "seed:postcodes": "node scripts/seed-postcode-zones.js"
   },
   "keywords": [],
   "author": "",

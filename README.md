@@ -210,15 +210,26 @@ Edit `zones.json` — each feature should include a `properties.name` field.
 
 Each delivery is assigned in this order:
 
-1. **Inside a zone** (`polygon`): the address falls inside one of the zones in `zones.json`.
-2. **Nearest-zone safety net** (`nearest`): the address is outside every zone but within `NEAREST_ZONE_MAX_METRES` (default 200 m) of one. It is given the nearest zone and **flagged for review**.
-3. **Unclassified** (`unclassified`): further away than the safety net. Also flagged for review.
+1. **Postcode list** (`postcode`): the postcode is looked up in the `delivery_postcode_zones` table. No outside address lookup is needed. Postcodes with status `check` are assigned but **flagged for review**. Postcodes with zone `Not delivered` are shown as Unclassified and flagged.
+2. **Inside a zone** (`polygon`): used when the postcode is not in the list, or is marked `is_split`. The address is looked up and matched against `zones.json`. Split postcodes are always flagged.
+3. **Nearest-zone safety net** (`nearest`): the address is outside every zone but within `NEAREST_ZONE_MAX_METRES` (default 200 m) of one. It is given the nearest zone and **flagged for review**.
+4. **Unclassified** (`unclassified`): further away than the safety net. Also flagged for review.
 
-The method, review flag and reason are saved in `delivery_manifests` (`assignment_method`, `needs_review`, `review_reason`) and shown on screen. To see deliveries that need checking:
+The method, review flag, reason and postcode are saved in `delivery_manifests` (`assignment_method`, `needs_review`, `review_reason`, `postcode`) and shown on screen. To see deliveries that need checking:
 
 ```sql
-SELECT processed_at, scanned_address, assigned_grouping, assignment_method, review_reason
+SELECT processed_at, scanned_address, postcode, assigned_grouping, assignment_method, review_reason
 FROM delivery_manifests WHERE needs_review ORDER BY processed_at DESC;
 ```
+
+### Postcode list
+
+1. Run `migrations/004_postcode_zones.sql` in pgAdmin.
+2. Load the starting list once with `npm run seed:postcodes`, using the same database settings as the app. Alternatively, use pgAdmin's Import/Export on `data/postcode_zones_seed.csv`. Re-running the seed never overwrites existing rows.
+3. Edit zones directly in pgAdmin. Set `status = 'confirmed'` once checked. The app reloads the list every 5 minutes, so no redeploy is needed. `/api/health` shows how many postcodes are loaded.
+
+`data/postcode_zones_seed.csv` was built from Ordnance Survey Code-Point Open. Each postcode was given a starting zone from `zones.json` (inside a zone, or within 200 m of one). Rows near a boundary or outside all zones have status `check`.
+
+Contains OS data © Crown copyright and database right 2026. Contains Royal Mail data © Royal Mail copyright and database right 2026. Contains National Statistics data © Crown copyright and database right 2026. Used under the [Open Government Licence](https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/).
 
 Run tests with `npm test`.
