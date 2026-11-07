@@ -3,13 +3,14 @@
 // Existing rows are never overwritten, so corrections made in pgAdmin are kept.
 // Usage: npm run seed:postcodes   (uses the same DB_* / DATABASE_URL settings as the app)
 const fs = require('fs');
-const path = require('path');
 const config = require('../config');
 const { withDb, closeDatabase } = require('../lib/db');
 const { normalisePostcode } = require('../lib/postcode');
 const zones = require('../lib/zones');
 
-const CSV_PATH = path.join(__dirname, '..', 'data', 'postcode_zones_seed.csv');
+// Run from the project folder (npm run seed:postcodes does this).
+const CSV_PATH = 'data/postcode_zones_seed.csv';
+const EXPECTED_HEADER = 'postcode,zone,status,is_split,latitude,longitude,notes';
 const knownZones = new Set(zones.features.map((f) => f.properties.name));
 
 function parseCsvLine(line) {
@@ -17,9 +18,9 @@ function parseCsvLine(line) {
     let cur = '';
     let quoted = false;
     for (let i = 0; i < line.length; i++) {
-        const ch = line[i];
+        const ch = line.charAt(i);
         if (quoted) {
-            if (ch === '"' && line[i + 1] === '"') { cur += '"'; i++; }
+            if (ch === '"' && line.charAt(i + 1) === '"') { cur += '"'; i++; }
             else if (ch === '"') quoted = false;
             else cur += ch;
         } else if (ch === '"') quoted = true;
@@ -34,8 +35,11 @@ async function main() {
     if (!config.dbEnabled) throw new Error('Database settings are not configured (see .env.example)');
 
     const [header, ...lines] = fs.readFileSync(CSV_PATH, 'utf8').split(/\r?\n/).filter(Boolean);
-    const cols = parseCsvLine(header);
-    const rows = lines.map((l) => Object.fromEntries(parseCsvLine(l).map((v, i) => [cols[i], v])));
+    if (header.trim() !== EXPECTED_HEADER) throw new Error(`Unexpected columns in ${CSV_PATH}; expected: ${EXPECTED_HEADER}`);
+    const rows = lines.map((l) => {
+        const [postcode, zone, status, isSplit, latitude, longitude, notes] = parseCsvLine(l);
+        return { postcode, zone, status, is_split: isSplit, latitude, longitude, notes };
+    });
 
     for (const r of rows) {
         if (!normalisePostcode(r.postcode)) throw new Error(`Invalid postcode in seed file: ${r.postcode}`);
