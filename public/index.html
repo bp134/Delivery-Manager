@@ -381,6 +381,7 @@
             <div><strong>Address:</strong> ${escapeHtml(address)}</div>
             <hr style="border:0; border-top:1px solid #ccc; margin: 10px 0;">
             <div><strong>Assigned Grouping:</strong> <span class="status">${escapeHtml(data.zone)}</span></div>
+            <div style="font-size: 0.8em; color: #64748b; margin-top: 4px;">Matched by: ${escapeHtml(({ postcode: 'postcode list', polygon: 'zone map', nearest: 'nearest zone (safety net)', unclassified: 'no match' })[data.method] || data.method || 'zone map')}</div>
             ${reviewNote}
             ${loggedNote}
         `;
@@ -416,7 +417,10 @@
 
             if (data.success) {
                 if (currentMarker) map.removeLayer(currentMarker);
-                currentMarker = L.marker([data.lat, data.lng]).addTo(map).bindPopup(escapeHtml(postcode)).openPopup();
+                currentMarker = null;
+                if (Number.isFinite(data.lat) && Number.isFinite(data.lng)) {
+                    currentMarker = L.marker([data.lat, data.lng]).addTo(map).bindPopup(escapeHtml(postcode)).openPopup();
+                }
 
                 output.innerHTML = renderResult(postcode, data);
                 addToBatchLog(postcode, data.needsReview ? `${data.zone} (check)` : data.zone);
@@ -487,7 +491,10 @@
 
             if (data.success) {
                 if (currentMarker) map.removeLayer(currentMarker);
-                currentMarker = L.marker([data.lat, data.lng]).addTo(map).bindPopup(escapeHtml(address)).openPopup();
+                currentMarker = null;
+                if (Number.isFinite(data.lat) && Number.isFinite(data.lng)) {
+                    currentMarker = L.marker([data.lat, data.lng]).addTo(map).bindPopup(escapeHtml(address)).openPopup();
+                }
                 output.innerHTML = renderResult(address, data);
             } else {
                 output.innerHTML = `<span class="error">${escapeHtml(data.message || 'Routing failed')}</span>`;

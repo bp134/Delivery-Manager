@@ -7,6 +7,7 @@ const config = require('./config');
 const zones = require('./lib/zones');
 const { routeDelivery } = require('./lib/routing');
 const { checkDbConnection, initDatabase, closeDatabase } = require('./lib/db');
+const { startPostcodeZoneRefresh, stopPostcodeZoneRefresh, postcodeZoneStatus } = require('./lib/postcodeZones');
 
 const app = express();
 const isRailway = config.server.isRailway;
@@ -52,6 +53,7 @@ app.get('/api/health', async (_req, res) => {
             tableReady: dbStatus.tableReady,
             databaseError: dbStatus.error || null,
             geocodeConfigured: Boolean(config.api.geocodeKey),
+            postcodeList: postcodeZoneStatus(),
             platform: isRailway ? 'railway' : 'local',
             port,
             host
@@ -112,9 +114,11 @@ server.listen(port, host, () => {
         );
     }
 
-    initDatabase().catch((error) => {
-        console.error('Database init failed:', error.message);
-    });
+    initDatabase()
+        .then(() => startPostcodeZoneRefresh())
+        .catch((error) => {
+            console.error('Database init failed:', error.message);
+        });
 
     setTimeout(() => {
         console.log(`[heartbeat] pid=${process.pid} uptime=${Math.floor(process.uptime())}s still listening on ${port}`);
@@ -128,6 +132,7 @@ server.on('error', (error) => {
 
 function shutdown() {
     server.close(async () => {
+        stopPostcodeZoneRefresh();
         await closeDatabase();
         process.exit(0);
     });
